@@ -1,4 +1,5 @@
 fastapi
 uvicorn
+gunicorn
 loguru
 js2py
