@@ -4,7 +4,6 @@ from app import utils
 from pathlib import Path
 
 
-
 test_data = {}
 test_data_path = Path(__file__).with_name("request_data_example.json")
 with test_data_path.open() as f:
