@@ -1,4 +1,7 @@
-# Custom Logger Using Loguru
+"""
+Custom logger using Loguru.
+Source: https://gist.github.com/Riki-1mg/ca3cf9cebdc0da29ed55234b56da3a00
+"""
 
 import logging
 import sys
@@ -43,8 +46,12 @@ class Logger:
         config = cls.load_logging_config(config_path)
         logging_config = config.get('logger')
 
+        log_path = None
+        if logging_config.get('path') is not None and logging_config.get('filename') is not None:
+            log_path = Path(logging_config.get('path')) / logging_config.get('filename')
+
         logger = cls.customize_logging(
-            logging_config.get('path'),
+            log_path,
             level=logging_config.get('level'),
             retention=logging_config.get('retention'),
             rotation=logging_config.get('rotation'),

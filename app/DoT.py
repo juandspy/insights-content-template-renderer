@@ -1,8 +1,7 @@
 """
-This module has been taken from https://github.com/lucemia/doT.
-It implements the DoT.js template framework in Python.
+This module implements the DoT.js template framework in Python.
+Source: https://github.com/lucemia/doT
 """
-
 import re
 
 version = '1.0.0'
