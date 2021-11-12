@@ -98,5 +98,5 @@ class Logger:
         return config
 
 
-config_path = Path(__file__).with_name("logging_config.json")
-logger = Logger.make_logger(config_path)
+config_path = Path(__file__).parents[0].with_name("logging_config.json")
+log = Logger.make_logger(config_path)

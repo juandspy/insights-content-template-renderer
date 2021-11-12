@@ -3,3 +3,4 @@ uvicorn
 gunicorn
 loguru
 js2py
+pytest
