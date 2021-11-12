@@ -127,7 +127,7 @@ def render_reports(request_data):
                 report_result = render_report(content, report)
                 result['reports'].setdefault(
                     cluster_id, []).append(report_result)
-            except:
+            except (ValueError, RuleNotFoundException, TemplateNotFoundException) as e:
                 log.debug(
                     f"The report for rule '{get_reported_module(report)}'" +
                     f" and error key '{get_reported_error_key(report)}' " +
