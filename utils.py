@@ -1,4 +1,3 @@
-import json
 import DoT
 import js2py
 from logger import logger
@@ -7,8 +6,9 @@ DoT_settings = {
     "evaluate": r"\{\{([\s\S]+?\}?)\}\}",
     "interpolate": r"\{\{=([\s\S]+?)\}\}",
     "encode": r"\{\{!([\s\S]+?)\}\}",
-    "use":  r"\{\{#([\s\S]+?)\}\}",
-    "useParams": r"(^|[^\w$])def(?:\.|\[[\'\"])([\w$\.]+)(?:[\'\"]\])?\s*\:\s*([\w$\.]+|\"[^\"]+\"|\'[^\']+\'|\{[^\}]+\})",
+    "use": r"\{\{#([\s\S]+?)\}\}",
+    "useParams": r"(^|[^\w$])def(?:\.|\[[\'\"])([\w$\.]+)(?:[\'\"]\])?\s*\:\s*([\w$\.]+|\"[^\"]+\"|\'[^\']+\'|\{["
+                 r"^\}]+\})",
     "define": r"\{\{##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\}\}",
     "defineParams": r"^\s*([\w$]+):([\s\S]+)",
     "conditional": r"\{\{\?(\?)?\s*([\s\S]*?)\s*\}\}",
@@ -20,8 +20,10 @@ DoT_settings = {
     "selfcontained": False
 }
 
+
 class RuleNotFoundException(Exception):
     pass
+
 
 class TemplateNotFoundException(Exception):
     pass
@@ -31,7 +33,9 @@ def get_reported_module(report):
     if 'rule_id' not in report.keys():
         raise ValueError("'rule_id' key is not present in report data")
     if '|' not in report['rule_id']:
-        raise ValueError("Value of 'rule_id' in report data is not in the correct format ('{report['rule_id']}' does not contain '|')")
+        raise ValueError(
+            "Value of 'rule_id' in report data is not in the correct format ('{report['rule_id']}' does not contain "
+            "'|')")
     return report['rule_id'].split('|')[0]
 
 
@@ -39,7 +43,9 @@ def get_reported_error_key(report):
     if 'rule_id' not in report.keys():
         raise ValueError("'rule_id' key is not present in report data")
     if '|' not in report['rule_id']:
-        raise ValueError("Value of 'rule_id' in report data is not in the correct format ('{report['rule_id']}' does not contain '|')")
+        raise ValueError(
+            "Value of 'rule_id' in report data is not in the correct format ('{report['rule_id']}' does not contain "
+            "'|')")
     return report['rule_id'].split('|')[1]
 
 
@@ -52,15 +58,17 @@ def get_template_function(template_name, rule_content, report):
     if template_name in error_key_content and error_key_content[template_name]:
         template_text = error_key_content[template_name]
 
-    if template_text == None or template_text == "":
+    if template_text is None or template_text == "":
         reported_module = get_reported_module(report)
-        raise TemplateNotFoundException(f'Template \'{template_name}\' has not been found for rule \'{reported_module}\' and error key \'{reported_error_key}\'.')
+        raise TemplateNotFoundException(
+            f"Template '{template_name}' has not been found for rule '{reported_module}' and error key '{reported_error_key}'.")
 
     return js2py.eval_js(DoT.template(template_text, DoT_settings))
 
 
 def render_resolution(rule_content, report):
-    resolution_template = get_template_function('resolution', rule_content, report)
+    resolution_template = get_template_function(
+        'resolution', rule_content, report)
     return resolution_template(report['details'])
 
 
@@ -79,13 +87,12 @@ def render_report(content, report):
 
     for rule in content:
         if reported_module == rule['plugin']['python_module'].split('.')[-1]:
-           
-            report_result = {}
-            report_result['rule_id'] = reported_module
-            report_result['error_key'] = reported_error_key
-            report_result['resolution'] = render_resolution(rule, report)
-            report_result['reason'] = render_reason(rule, report)
-
+            report_result = {
+                'rule_id': reported_module,
+                'error_key': reported_error_key,
+                'resolution': render_resolution(rule, report),
+                'reason': render_reason(rule, report)
+            }
             return report_result
 
     msg = f'The rule content for \'{reported_module}\' has not been found.'
@@ -94,7 +101,7 @@ def render_report(content, report):
 
 
 def check_request_data_format(request_data):
-    return ('content' in request_data.keys() and 
+    return ('content' in request_data.keys() and
             'report_data' in request_data.keys() and
             'clusters' in request_data['report_data'].keys() and
             'reports' in request_data['report_data'].keys())
@@ -118,12 +125,13 @@ def render_reports(request_data):
         for report in cluster_data['reports']:
             try:
                 report_result = render_report(content, report)
-                result['reports'].setdefault(cluster_id, []).append(report_result)
+                result['reports'].setdefault(
+                    cluster_id, []).append(report_result)
             except:
-                logger.debug(f"The report for rule '{get_reported_module(report)}'" + 
-                        f" and error key '{get_reported_error_key(report)}' " + 
-                        f"could not be processed")
+                logger.debug(f"The report for rule '{get_reported_module(report)}'" +
+                             f" and error key '{get_reported_error_key(report)}' " +
+                             f"could not be processed")
 
-    logger.info("The reports from the request have been processed")        
+    logger.info("The reports from the request have been processed")
 
     return result
