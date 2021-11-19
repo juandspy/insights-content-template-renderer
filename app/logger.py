@@ -14,13 +14,14 @@ class InterceptHandler(logging.Handler):
     """
     Custom logging handler.
     """
+
     loglevel_mapping = {
-        50: 'CRITICAL',
-        40: 'ERROR',
-        30: 'WARNING',
-        20: 'INFO',
-        10: 'DEBUG',
-        0: 'NOTSET',
+        50: "CRITICAL",
+        40: "ERROR",
+        30: "WARNING",
+        20: "INFO",
+        10: "DEBUG",
+        0: "NOTSET",
     }
 
     def emit(self, record):
@@ -40,11 +41,8 @@ class InterceptHandler(logging.Handler):
             frame = frame.f_back
             depth += 1
 
-        log = logger.bind(request_id='app')
-        log.opt(
-            depth=depth,
-            exception=record.exc_info
-        ).log(level, record.getMessage())
+        log = logger.bind(request_id="app")
+        log.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
 
 
 class Logger:
@@ -61,7 +59,7 @@ class Logger:
         :return: the created logger
         """
         config = cls.load_logging_config(config_path)
-        logging_config = config.get('logger')
+        logging_config = config.get("logger")
         custom_logger = cls.customize_logging(logging_config)
 
         return custom_logger
@@ -76,33 +74,33 @@ class Logger:
         :return: configured logger
         """
         log_path = None
-        if logging_config.get('path') is not None and logging_config.get('filename') is not None:
-            log_path = Path(logging_config.get('path')) / logging_config.get('filename')
+        if (
+            logging_config.get("path") is not None
+            and logging_config.get("filename") is not None
+        ):
+            log_path = Path(logging_config.get("path")) / logging_config.get("filename")
 
         logger.remove()
         logger.add(
             sys.stdout,
             enqueue=True,
             backtrace=True,
-            level=logging_config.get('level').upper(),
-            format=logging_config.get('format')
+            level=logging_config.get("level").upper(),
+            format=logging_config.get("format"),
         )
         if log_path is not None:
             logger.add(
                 str(log_path),
-                rotation=logging_config.get('rotation'),
-                retention=logging_config.get('retention'),
+                rotation=logging_config.get("rotation"),
+                retention=logging_config.get("retention"),
                 enqueue=True,
                 backtrace=True,
-                level=logging_config.get('level').upper(),
-                format=logging_config.get('format')
+                level=logging_config.get("level").upper(),
+                format=logging_config.get("format"),
             )
         logging.basicConfig(handlers=[InterceptHandler()], level=0)
         logging.getLogger("uvicorn.access").handlers = [InterceptHandler()]
-        for _log in ['uvicorn',
-                     'uvicorn.error',
-                     'fastapi'
-                     ]:
+        for _log in ["uvicorn", "uvicorn.error", "fastapi"]:
             _logger = logging.getLogger(_log)
             _logger.handlers = [InterceptHandler()]
 
@@ -117,7 +115,7 @@ class Logger:
         :return: dictionary with logger parameters
         """
         config = None
-        with open(config_path, encoding='UTF-8') as config_file:
+        with open(config_path, encoding="UTF-8") as config_file:
             config = json.load(config_file)
         return config
 

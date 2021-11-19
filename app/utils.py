@@ -8,7 +8,7 @@ from app.logger import app_log as log
 from app.DoT import template_settings
 
 DoT_settings = template_settings
-DoT_settings['varname'] = 'pydata'
+DoT_settings["varname"] = "pydata"
 
 
 class RuleNotFoundException(Exception):
@@ -31,13 +31,14 @@ def get_reported_module(report):
     :param report: dictionary with report details
     :return: name of the reported module
     """
-    if 'rule_id' not in report.keys():
+    if "rule_id" not in report.keys():
         raise ValueError("'rule_id' key is not present in report data")
-    if '|' not in report['rule_id']:
+    if "|" not in report["rule_id"]:
         raise ValueError(
-            "Value of 'rule_id' in report data is not in the correct format " +
-            f"('{report['rule_id']}' does not contain '|')")
-    return report['rule_id'].split('|')[0]
+            "Value of 'rule_id' in report data is not in the correct format "
+            + f"('{report['rule_id']}' does not contain '|')"
+        )
+    return report["rule_id"].split("|")[0]
 
 
 def get_reported_error_key(report):
@@ -47,13 +48,14 @@ def get_reported_error_key(report):
     :param report: dictionary with report details
     :return: reported error key
     """
-    if 'rule_id' not in report.keys():
+    if "rule_id" not in report.keys():
         raise ValueError("'rule_id' key is not present in report data")
-    if '|' not in report['rule_id']:
+    if "|" not in report["rule_id"]:
         raise ValueError(
-            "Value of 'rule_id' in report data is not in the correct format " +
-            f"('{report['rule_id']}' does not contain '|')")
-    return report['rule_id'].split('|')[1]
+            "Value of 'rule_id' in report data is not in the correct format "
+            + f"('{report['rule_id']}' does not contain '|')"
+        )
+    return report["rule_id"].split("|")[1]
 
 
 def get_template_function(template_name, rule_content, report):
@@ -69,7 +71,7 @@ def get_template_function(template_name, rule_content, report):
     template_text = rule_content[template_name]
 
     reported_error_key = get_reported_error_key(report)
-    error_key_content = rule_content['error_keys'][reported_error_key]
+    error_key_content = rule_content["error_keys"][reported_error_key]
 
     if template_name in error_key_content and error_key_content[template_name]:
         template_text = error_key_content[template_name]
@@ -77,8 +79,9 @@ def get_template_function(template_name, rule_content, report):
     if template_text is None or template_text == "":
         reported_module = get_reported_module(report)
         raise TemplateNotFoundException(
-            f"Template '{template_name}' has not been found for rule '{reported_module}' " +
-            f"and error key '{reported_error_key}'.")
+            f"Template '{template_name}' has not been found for rule '{reported_module}' "
+            + f"and error key '{reported_error_key}'."
+        )
 
     return js2py.eval_js(DoT.template(template_text, DoT_settings))
 
@@ -91,9 +94,8 @@ def render_resolution(rule_content, report):
     :param report: dictionary with report details
     :return: string with rendered resolution
     """
-    resolution_template = get_template_function(
-        'resolution', rule_content, report)
-    return resolution_template(report['details'])
+    resolution_template = get_template_function("resolution", rule_content, report)
+    return resolution_template(report["details"])
 
 
 def render_reason(rule_content, report):
@@ -104,8 +106,8 @@ def render_reason(rule_content, report):
     :param report: dictionary with report details
     :return: string with rendered reason
     """
-    reason_template = get_template_function('reason', rule_content, report)
-    return reason_template(report['details'])
+    reason_template = get_template_function("reason", rule_content, report)
+    return reason_template(report["details"])
 
 
 def render_report(content, report):
@@ -124,16 +126,16 @@ def render_report(content, report):
         raise exception
 
     for rule in content:
-        if reported_module == rule['plugin']['python_module'].split('.')[-1]:
+        if reported_module == rule["plugin"]["python_module"].split(".")[-1]:
             report_result = {
-                'rule_id': reported_module,
-                'error_key': reported_error_key,
-                'resolution': render_resolution(rule, report),
-                'reason': render_reason(rule, report)
+                "rule_id": reported_module,
+                "error_key": reported_error_key,
+                "resolution": render_resolution(rule, report),
+                "reason": render_reason(rule, report),
             }
             return report_result
 
-    msg = f'The rule content for \'{reported_module}\' has not been found.'
+    msg = f"The rule content for '{reported_module}' has not been found."
     log.debug(msg)
     raise RuleNotFoundException(msg)
 
@@ -145,10 +147,12 @@ def check_request_data_format(request_data):
     :param request_data: dictionary retrieved from JSON body of the request
     :return: true if the data have required fields, false otherwise
     """
-    return ('content' in request_data.keys() and
-            'report_data' in request_data.keys() and
-            'clusters' in request_data['report_data'].keys() and
-            'reports' in request_data['report_data'].keys())
+    return (
+        "content" in request_data.keys()
+        and "report_data" in request_data.keys()
+        and "clusters" in request_data["report_data"].keys()
+        and "reports" in request_data["report_data"].keys()
+    )
 
 
 def render_reports(request_data):
@@ -165,23 +169,23 @@ def render_reports(request_data):
         log.error(msg)
         raise ValueError(msg)
 
-    content = request_data['content']
-    report_data = request_data['report_data']
-    result = {'clusters': report_data['clusters'], 'reports': {}}
+    content = request_data["content"]
+    report_data = request_data["report_data"]
+    result = {"clusters": report_data["clusters"], "reports": {}}
 
     log.info("Iterating through the reports of each cluster")
 
-    for cluster_id, cluster_data in report_data['reports'].items():
-        for report in cluster_data['reports']:
+    for cluster_id, cluster_data in report_data["reports"].items():
+        for report in cluster_data["reports"]:
             try:
                 report_result = render_report(content, report)
-                result['reports'].setdefault(
-                    cluster_id, []).append(report_result)
+                result["reports"].setdefault(cluster_id, []).append(report_result)
             except (ValueError, RuleNotFoundException, TemplateNotFoundException):
                 log.debug(
-                    f"The report for rule '{get_reported_module(report)}'" +
-                    f" and error key '{get_reported_error_key(report)}' " +
-                    "could not be processed")
+                    f"The report for rule '{get_reported_module(report)}'"
+                    + f" and error key '{get_reported_error_key(report)}' "
+                    + "could not be processed"
+                )
 
     log.info("The reports from the request have been processed")
 
