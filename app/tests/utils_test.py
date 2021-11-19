@@ -1,16 +1,23 @@
-import pytest
+"""
+Unit tests for utils.py
+"""
+
 import json
-from app import utils
 from pathlib import Path
+import pytest
+from app import utils
 
 
 test_data = {}
 test_data_path = Path(__file__).with_name("request_data_example.json")
-with test_data_path.open() as f:
+with test_data_path.open(encoding='UTF-8') as f:
     test_data = json.load(f)
 
 
 def test_get_reported_error_key():
+    """
+    Checks that the get_reported_error_key() function parses reported error key correctly.
+    """
     cluster_reports = test_data["report_data"]["reports"]["5d5892d3-1f74-4ccf-91af-548dfc9767aa"]
     report = cluster_reports["reports"][0].copy()
     reported_error_key = utils.get_reported_error_key(report)
@@ -18,6 +25,9 @@ def test_get_reported_error_key():
 
 
 def test_get_reported_module():
+    """
+    Checks that the get_reported_module() function parses reported error key correctly.
+    """
     cluster_reports = test_data["report_data"]["reports"]["5d5892d3-1f74-4ccf-91af-548dfc9767aa"]
     report = cluster_reports["reports"][0].copy()
     reported_module = utils.get_reported_module(report)
@@ -25,6 +35,10 @@ def test_get_reported_module():
 
 
 def test_get_reported_module_rule_id_missing():
+    """
+    Checks that the get_reported_error_key() function raises error
+    in case the required field is missing.
+    """
     cluster_reports = test_data["report_data"]["reports"]["5d5892d3-1f74-4ccf-91af-548dfc9767aa"]
     report = cluster_reports["reports"][0].copy()
     del report['rule_id']
@@ -33,6 +47,10 @@ def test_get_reported_module_rule_id_missing():
 
 
 def test_get_reported_module_rule_id_wrong_format():
+    """
+    Checks that the get_reported_error_key() function raises error
+    in case the input is in wrong format.
+    """
     cluster_reports = test_data["report_data"]["reports"]["5d5892d3-1f74-4ccf-91af-548dfc9767aa"]
     report = cluster_reports["reports"][0].copy()
     report['rule_id'] = report['rule_id'].replace('|', ';')
@@ -41,6 +59,9 @@ def test_get_reported_module_rule_id_wrong_format():
 
 
 def test_render_resolution():
+    """
+    Checks that th render_resolution() function renders resolution correctly.
+    """
     cluster_reports = test_data["report_data"]["reports"]["5d5892d3-1f74-4ccf-91af-548dfc9767aa"]
     report = cluster_reports["reports"][0].copy()
     rule_content = test_data["content"][2].copy()
@@ -51,6 +72,9 @@ def test_render_resolution():
 
 
 def test_render_reason():
+    """
+    Checks that render_reason() function renders reason correctly.
+    """
     cluster_reports = test_data["report_data"]["reports"]["5d5892d3-1f74-4ccf-91af-548dfc9767aa"]
     report = cluster_reports["reports"][0].copy()
     rule_content = test_data["content"][2]
@@ -61,6 +85,9 @@ def test_render_reason():
 
 
 def test_render_report():
+    """
+    Checks that render_report() renders the whole report correctly.
+    """
     cluster_reports = test_data["report_data"]["reports"]["5d5892d3-1f74-4ccf-91af-548dfc9767aa"]
     report = cluster_reports["reports"][0].copy()
     content = test_data["content"].copy()
@@ -77,6 +104,10 @@ def test_render_report():
 
 
 def test_render_report_missing_rule_content():
+    """
+    Checks that render_report() function raises exception in case
+    that content for the reported rule is missing.
+    """
     cluster_reports = test_data["report_data"]["reports"]["5d5892d3-1f74-4ccf-91af-548dfc9767aa"]
     report = cluster_reports["reports"][0].copy()
     content = test_data["content"].copy()
@@ -86,6 +117,9 @@ def test_render_report_missing_rule_content():
 
 
 def test_render_reports():
+    """
+    Checks that render_reports() function renders all reports correctly.
+    """
     result = {
         'clusters': ['5d5892d3-1f74-4ccf-91af-548dfc9767aa'],
         'reports': {
@@ -132,6 +166,9 @@ def test_render_reports():
 
 
 def test_render_reports_missing_content():
+    """
+    Checks that render_reports() function raises exception if the content data are missing.
+    """
     data = test_data.copy()
     del data['content']
     with pytest.raises(ValueError):
@@ -139,6 +176,9 @@ def test_render_reports_missing_content():
 
 
 def test_render_reports_missing_report_data():
+    """
+     Checks that render_reports() function raises exception if the report data are missing.
+     """
     data = test_data.copy()
     del data['report_data']
     with pytest.raises(ValueError):
@@ -146,6 +186,10 @@ def test_render_reports_missing_report_data():
 
 
 def test_render_reports_missing_clusters():
+    """
+     Checks that render_reports() function raises exception
+     if the data for reported clusters are missing.
+     """
     data = test_data.copy()
     del data['report_data']['clusters']
     with pytest.raises(ValueError):
@@ -153,6 +197,10 @@ def test_render_reports_missing_clusters():
 
 
 def test_render_reports_missing_reports():
+    """
+     Checks that render_reports() function raises exception
+     if the data for individual reports are missing.
+     """
     data = test_data.copy()
     del data['report_data']['reports']
     with pytest.raises(ValueError):

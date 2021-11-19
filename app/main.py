@@ -4,7 +4,7 @@ Contains app initialization and its only endpoint.
 
 from fastapi import Request, FastAPI
 from app.utils import render_reports
-from app.logger import log
+from app.logger import app_log as log
 
 app = FastAPI()
 

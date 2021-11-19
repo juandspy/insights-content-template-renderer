@@ -4,24 +4,11 @@ Provides all business logic for this service.
 
 import js2py
 from app import DoT
-from app.logger import log
+from app.logger import app_log as log
+from app.DoT import template_settings
 
-DoT_settings = {
-    "evaluate": r"\{\{([\s\S]+?\}?)\}\}",
-    "interpolate": r"\{\{=([\s\S]+?)\}\}",
-    "encode": r"\{\{!([\s\S]+?)\}\}",
-    "use": r"\{\{#([\s\S]+?)\}\}",
-    "useParams": r"(^|[^\w$])def(?:\.|\[[\'\"])([\w$\.]+)(?:[\'\"]\])?\s*\:\s*([\w$\.]+|\"["
-                 r"^\"]+\"|\'[^\']+\'|\{[ "
-                 r"^\}]+\})",
-    "define": r"\{\{##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\}\}",
-    "defineParams": r"^\s*([\w$]+):([\s\S]+)",
-    "conditional": r"\{\{\?(\?)?\s*([\s\S]*?)\s*\}\}",
-    "iterate": r"\{\{~\s*(?:\}\}|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\}\})",
-    "varname": "pydata",
-    "strip": True,
-    "append": True,
-    "selfcontained": False}
+DoT_settings = template_settings
+DoT_settings['varname'] = 'pydata'
 
 
 class RuleNotFoundException(Exception):
