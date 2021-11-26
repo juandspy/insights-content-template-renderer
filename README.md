@@ -7,7 +7,7 @@ For that purpose it uses the implementation of [DoT.js framework in Python](http
 
 The service can be run either locally:
 
-`pip3 install -r requirements.txt && ./run.sh`
+`pip3 install . && insights-content-template-renderer --config <CONFIG>`
 
 Or you can run the service as the Docker container. In that case make sure you have a Docker engine installed and running. Then you can create a Docker image with
 
