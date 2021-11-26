@@ -2,13 +2,14 @@
 Provides all business logic for this service.
 """
 
+import logging
 import js2py
-from app import DoT
-from app.logger import app_log as log
-from app.DoT import template_settings
+from insights_content_template_renderer import DoT
+from insights_content_template_renderer.DoT import template_settings
 
 DoT_settings = template_settings
 DoT_settings["varname"] = "pydata"
+log = logging.getLogger(__name__)
 
 
 class RuleNotFoundException(Exception):
@@ -182,9 +183,8 @@ def render_reports(request_data):
                 result["reports"].setdefault(cluster_id, []).append(report_result)
             except (ValueError, RuleNotFoundException, TemplateNotFoundException):
                 log.debug(
-                    f"The report for rule '{get_reported_module(report)}'"
-                    + f" and error key '{get_reported_error_key(report)}' "
-                    + "could not be processed"
+                    "The report for rule '%s' and error key '%s' could not be processed",
+                    get_reported_module(report), get_reported_error_key(report)
                 )
 
     log.info("The reports from the request have been processed")

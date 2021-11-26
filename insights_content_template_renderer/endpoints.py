@@ -1,12 +1,13 @@
 """
-Contains app initialization and its only endpoint.
+Contains service endpoints.
 """
 
+import logging
 from fastapi import Request, FastAPI
-from app.utils import render_reports
-from app.logger import app_log as log
+from insights_content_template_renderer.utils import render_reports
 
 app = FastAPI()
+log = logging.getLogger(__name__)
 
 
 @app.post("/rendered_reports")

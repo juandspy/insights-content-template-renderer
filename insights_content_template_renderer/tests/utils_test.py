@@ -5,7 +5,7 @@ Unit tests for utils.py
 import json
 from pathlib import Path
 import pytest
-from app import utils
+from insights_content_template_renderer import utils
 
 
 test_data = {}
