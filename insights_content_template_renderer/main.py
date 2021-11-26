@@ -54,14 +54,13 @@ def command_line():
     """Command line handler for this insights_content_template_renderer."""
     args = parse_args()
 
-    CustomLogger.logging_config = args.config
-
+    CustomLogger.logging_config = args.config["logging"]
     if args.version:
         logging.basicConfig(format="%(message)s", level=logging.INFO)
         print_version()
         sys.exit(0)
     else:
-        WebServer(app, {}).run()
+        WebServer(app, {"bind": args.config["host"] + ":" + str(args.config["port"])}).run()
 
 
 class CustomLogger(glogging.Logger):
@@ -71,6 +70,9 @@ class CustomLogger(glogging.Logger):
 
     def setup(self, cfg):
         """Configure Gunicorn application logging configuration."""
+        print(self.logging_config)
+        print(self.logging_config)
+
         logging.config.dictConfig(self.logging_config)
 
 
@@ -95,10 +97,12 @@ class WebServer(base.BaseApplication):
         self.cfg.set('logger_class', CustomLogger)
         self.cfg.set('worker_class', 'uvicorn.workers.UvicornWorker')
         self.cfg.set('pythonpath', 'insights_content_template_renderer')
+        if 'bind' in self.options:
+            self.cfg.set('bind', self.options["bind"])
 
 
 if __name__ == "__main__":
     filepath = Path(__file__).parents[0].with_name("config.json")
     with open(filepath, encoding='UTF-8') as f:
-        CustomLogger.logging_config = json.load(f)
+        CustomLogger.logging_config = json.load(f)["logging"]
     WebServer(app, {}).run()
