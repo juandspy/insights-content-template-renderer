@@ -98,7 +98,7 @@ class WebServer(base.BaseApplication):
 
 
 if __name__ == "__main__":
-    filepath = Path(__file__).parents[0].with_name("logging_config.json")
+    filepath = Path(__file__).parents[0].with_name("config.json")
     with open(filepath, encoding='UTF-8') as f:
         CustomLogger.logging_config = json.load(f)
     WebServer(app, {}).run()
