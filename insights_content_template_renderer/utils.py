@@ -123,7 +123,6 @@ def render_report(content, report):
         reported_module = get_reported_module(report)
         reported_error_key = get_reported_error_key(report)
     except ValueError as exception:
-        log.error(str(exception))
         raise exception
 
     for rule in content:
@@ -137,7 +136,6 @@ def render_report(content, report):
             return report_result
 
     msg = f"The rule content for '{reported_module}' has not been found."
-    log.debug(msg)
     raise RuleNotFoundException(msg)
 
 
@@ -181,9 +179,10 @@ def render_reports(request_data):
             try:
                 report_result = render_report(content, report)
                 result["reports"].setdefault(cluster_id, []).append(report_result)
-            except (ValueError, RuleNotFoundException, TemplateNotFoundException):
+            except (ValueError, RuleNotFoundException, TemplateNotFoundException) as exception:
+                log.debug(exception)
                 log.debug(
-                    "The report for rule '%s' and error key '%s' could not be processed",
+                    "The report for rule '%s' and error key '%s' could not be processed.",
                     get_reported_module(report), get_reported_error_key(report)
                 )
 
