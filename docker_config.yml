@@ -1,0 +1,21 @@
+"host": "0.0.0.0"
+"port": 8000
+"logging":
+   "version": 1
+   "disable_existing_loggers": false
+   "formatters":
+      "KeyValueFormatter":
+         "format": "timestamp=%(asctime)s pid=%(process)d loglevel=%(levelname)s msg=%(message)s"
+   "handlers":
+      "console":
+         "level": "DEBUG"
+         "class": "logging.StreamHandler"
+         "formatter": "KeyValueFormatter"
+   "loggers":
+      "gunicorn.access":
+         "propagate": true
+      "gunicorn.error":
+         "propagate": true
+   "root":
+      "level": "DEBUG"
+      "handlers": ["console"]

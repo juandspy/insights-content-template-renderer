@@ -10,4 +10,4 @@ RUN pip install .
 
 EXPOSE 8000
 
-CMD ["insights-content-template-renderer", "--config", "docker_config.json"]
+CMD ["insights-content-template-renderer", "--config", "docker_config.yml"]

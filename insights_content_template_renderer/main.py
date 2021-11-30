@@ -5,7 +5,7 @@ Contains insights_content_template_renderer initialization and command line hand
 import logging
 import sys
 import os
-import json
+import yaml
 import argparse
 from pathlib import Path
 import pkg_resources
@@ -23,7 +23,7 @@ def is_valid_config(parser, arg):
         parser.error(f"The file {arg} does not exist!")
     else:
         with open(arg, 'r', encoding='UTF-8') as config_file:
-            conf = json.load(config_file)
+            conf = yaml.safe_load(config_file)
     return conf
 
 
@@ -102,7 +102,7 @@ class WebServer(base.BaseApplication):
 
 
 if __name__ == "__main__":
-    filepath = Path(__file__).parents[0].with_name("config.json")
+    filepath = Path(__file__).parents[0].with_name("config.yml")
     with open(filepath, encoding='UTF-8') as f:
-        CustomLogger.logging_config = json.load(f)["logging"]
+        CustomLogger.logging_config = yaml.safe_load(f)["logging"]
     WebServer(app, {}).run()
