@@ -4,6 +4,7 @@ Source: https://github.com/lucemia/doT
 """
 import re
 
+
 version = '1.0.0'
 template_settings = {
     "evaluate": r"\{\{([\s\S]+?\}?)\}\}",
@@ -46,7 +47,7 @@ def resolve_defs(c, tmpl, _def):
 
 
 def unescape(code):
-    return re.sub(r"[\r\t\n]", ' ', re.sub(r"\\(['\\])", "$1", code))
+    return re.sub(r"[\r\t\n]", ' ', re.sub(r"\\(['\\])", r"\1", code))
 
 
 def template(tmpl, c=None, _def=None):
@@ -100,7 +101,7 @@ def template(tmpl, c=None, _def=None):
         _str = re.sub(r"(^|\r|\n)\t* +| +\t*(\r|\n|$)", " ", _str)
         _str = re.sub(r"\r|\n|\t|/\*[\s\S]*?\*/", '', _str)
 
-    # _str = re.sub(r"|\\", '\\$&', _str)
+    _str = re.sub(r"('|\\)", r"\\\1", _str)
 
     if c.get('interpolate'):
         _str = re.sub(c['interpolate'], lambda i: _interpolate(i.groups()[0]), _str)

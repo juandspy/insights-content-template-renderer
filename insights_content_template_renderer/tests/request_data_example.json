@@ -85,7 +85,7 @@
             "error_keys": {
                 "NODES_MINIMUM_REQUIREMENTS_NOT_MET": {
                     "metadata": {
-                        "description": "An OCP node behaves unexpectedly when it doesn't meet the minimum resource requirements",
+                        "description": "An OCP node {{~ pydata.nodes :node }}{{=node[\"name\"]}}{{~}} behaves unexpectedly when it doesn't meet the minimum resource requirements",
                         "impact": 2,
                         "likelihood": 3,
                         "publish_date": "2019-10-29 15:00:00",
