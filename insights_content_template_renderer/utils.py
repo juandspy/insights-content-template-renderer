@@ -27,64 +27,68 @@ class TemplateNotFoundException(Exception):
 
 def get_reported_module(report):
     """
-    Parses the 'rule_id' field of the report and returns the name of the reported module.
+    Returns the name of the reported module.
 
     :param report: dictionary with report details
     :return: name of the reported module
     """
-    if "rule_id" not in report.keys():
-        raise ValueError("'rule_id' key is not present in report data")
-    if "|" not in report["rule_id"]:
-        raise ValueError(
-            "Value of 'rule_id' in report data is not in the correct format "
-            + f"('{report['rule_id']}' does not contain '|')"
-        )
-    return report["rule_id"].split("|")[0]
+    if "component" not in report.keys():
+        raise ValueError("'component' key is not present in report data")
+    return report["component"][0:report["component"].rfind(".")]
 
 
 def get_reported_error_key(report):
     """
-    Parses the 'rule_id' field of the report and returns the reported error key.
+    Returns the reported error key.
 
     :param report: dictionary with report details
     :return: reported error key
     """
-    if "rule_id" not in report.keys():
-        raise ValueError("'rule_id' key is not present in report data")
-    if "|" not in report["rule_id"]:
-        raise ValueError(
-            "Value of 'rule_id' in report data is not in the correct format "
-            + f"('{report['rule_id']}' does not contain '|')"
-        )
-    return report["rule_id"].split("|")[1]
+    if "key" not in report.keys():
+        raise ValueError("'key' key is not present in report data")
+    return report["key"]
 
-
-def get_template_function(template_name, rule_content, report):
+def get_template_function(template_name, template_text, report):
     """
     Retrieves the DoT.js template based on the name of the field in the given content data
     and returns the Python function created with that template.
 
-    :param template_name: field of the template (usually 'reason' or 'resolution')
-    :param rule_content: dictionary with content data for the reported rule
+    :param template_name: name of the field in content data with template
+    :param template_text: template in DoT.js format
     :param report: dictionary with report details
     :return: Python function for rendering report based on given report details
     """
-    template_text = rule_content[template_name]
-
-    reported_error_key = get_reported_error_key(report)
-    error_key_content = rule_content["error_keys"][reported_error_key]
-
-    if template_name in error_key_content and error_key_content[template_name]:
-        template_text = error_key_content[template_name]
-
     if template_text is None or template_text == "":
         reported_module = get_reported_module(report)
+        reported_error_key = get_reported_error_key(report)
         raise TemplateNotFoundException(
             f"Template '{template_name}' has not been found for rule '{reported_module}' "
             + f"and error key '{reported_error_key}'."
         )
-
+    log.info(template_text)
+    log.info(DoT.template(template_text, DoT_settings))
+    print(DoT.template(template_text, DoT_settings))
     return js2py.eval_js(DoT.template(template_text, DoT_settings))
+
+
+def render_description(rule_content, report):
+    """
+    Renders report description.
+
+    :param rule_content: dictionary with content data for reported rule
+    :param report: dictionary with report details
+    :return: string with rendered description
+    """
+    reported_error_key = get_reported_error_key(report)
+    error_key_content = rule_content["error_keys"][reported_error_key]
+
+    if "description" in error_key_content["metadata"] and error_key_content["metadata"]["description"]:
+        template_text = error_key_content["metadata"]["description"]
+
+    description_template = get_template_function("metadata.description", template_text, report)
+    log.info(description_template(report["details"]))
+    print(description_template(report["details"]))
+    return description_template(report["details"])
 
 
 def render_resolution(rule_content, report):
@@ -95,7 +99,16 @@ def render_resolution(rule_content, report):
     :param report: dictionary with report details
     :return: string with rendered resolution
     """
-    resolution_template = get_template_function("resolution", rule_content, report)
+    template_text = rule_content["resolution"]
+
+    reported_error_key = get_reported_error_key(report)
+    error_key_content = rule_content["error_keys"][reported_error_key]
+
+    if "resolution" in error_key_content and error_key_content["resolution"]:
+        template_text = error_key_content["resolution"]
+
+    resolution_template = get_template_function("resolution", template_text, report)
+    log.info(report['details'])
     return resolution_template(report["details"])
 
 
@@ -107,7 +120,15 @@ def render_reason(rule_content, report):
     :param report: dictionary with report details
     :return: string with rendered reason
     """
-    reason_template = get_template_function("reason", rule_content, report)
+    template_text = rule_content["reason"]
+
+    reported_error_key = get_reported_error_key(report)
+    error_key_content = rule_content["error_keys"][reported_error_key]
+
+    if "reason" in error_key_content and error_key_content["reason"]:
+        template_text = error_key_content["reason"]
+
+    reason_template = get_template_function("reason", template_text, report)
     return reason_template(report["details"])
 
 
@@ -126,12 +147,13 @@ def render_report(content, report):
         raise exception
 
     for rule in content:
-        if reported_module == rule["plugin"]["python_module"].split(".")[-1]:
+        if reported_module == rule["plugin"]["python_module"]:
             report_result = {
                 "rule_id": reported_module,
                 "error_key": reported_error_key,
                 "resolution": render_resolution(rule, report),
                 "reason": render_reason(rule, report),
+                "description": render_description(rule, report),
             }
             return report_result
 

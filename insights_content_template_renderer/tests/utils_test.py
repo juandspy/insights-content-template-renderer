@@ -35,10 +35,24 @@ def test_get_reported_module():
     ]
     report = cluster_reports["reports"][0].copy()
     reported_module = utils.get_reported_module(report)
-    assert reported_module == "nodes_requirements_check"
+    assert reported_module == "ccx_rules_ocp.external.rules.nodes_requirements_check"
 
 
-def test_get_reported_module_rule_id_missing():
+def test_get_reported_module_component_field_missing():
+    """
+    Checks that the get_reported_module() function raises error
+    in case the required field is missing.
+    """
+    cluster_reports = test_data["report_data"]["reports"][
+        "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
+    ]
+    report = cluster_reports["reports"][0].copy()
+    del report["component"]
+    with pytest.raises(ValueError):
+        utils.get_reported_module(report)
+
+
+def test_get_reported_error_key_key_field_missing():
     """
     Checks that the get_reported_error_key() function raises error
     in case the required field is missing.
@@ -47,23 +61,9 @@ def test_get_reported_module_rule_id_missing():
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
     report = cluster_reports["reports"][0].copy()
-    del report["rule_id"]
+    del report["key"]
     with pytest.raises(ValueError):
-        utils.get_reported_module(report)
-
-
-def test_get_reported_module_rule_id_wrong_format():
-    """
-    Checks that the get_reported_error_key() function raises error
-    in case the input is in wrong format.
-    """
-    cluster_reports = test_data["report_data"]["reports"][
-        "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
-    ]
-    report = cluster_reports["reports"][0].copy()
-    report["rule_id"] = report["rule_id"].replace("|", ";")
-    with pytest.raises(ValueError):
-        utils.get_reported_module(report)
+        utils.get_reported_error_key(report)
 
 
 def test_render_resolution():
@@ -99,6 +99,19 @@ def test_render_reason():
         "but the node is configured with 8.16."
     )
 
+def test_render_description():
+    """
+    Checks that render_reason() function renders reason correctly.
+    """
+    cluster_reports = test_data["report_data"]["reports"][
+        "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
+    ]
+    report = cluster_reports["reports"][0].copy()
+    rule_content = test_data["content"][2]
+    assert (
+        utils.render_description(rule_content, report) == "An OCP node foo1 behaves unexpectedly when it doesn't meet the minimum resource requirements"
+    )
+
 
 def test_render_report():
     """
@@ -110,7 +123,7 @@ def test_render_report():
     report = cluster_reports["reports"][0].copy()
     content = test_data["content"].copy()
     result = {
-        "rule_id": "nodes_requirements_check",
+        "rule_id": "ccx_rules_ocp.external.rules.nodes_requirements_check",
         "error_key": "NODES_MINIMUM_REQUIREMENTS_NOT_MET",
         "resolution": "Red Hat recommends that you configure your nodes to meet the minimum "
         "resource requirements.Make sure that:1. Node foo1 (undefined) * Has enough "
@@ -118,6 +131,7 @@ def test_render_report():
         "8.16GB.",
         "reason": "Node not meeting the minimum requirements:1. foo1 * Roles: undefined * Minimum "
         "memory requirement is 16, but the node is configured with 8.16.",
+        "description": "An OCP node foo1 behaves unexpectedly when it doesn't meet the minimum resource requirements",
     }
     assert utils.render_report(content, report) == result
 
@@ -146,8 +160,10 @@ def test_render_reports():
         "reports": {
             "5d5892d3-1f74-4ccf-91af-548dfc9767aa": [
                 {
-                    "rule_id": "nodes_requirements_check",
+                    "rule_id": "ccx_rules_ocp.external.rules.nodes_requirements_check",
                     "error_key": "NODES_MINIMUM_REQUIREMENTS_NOT_MET",
+                    "description": "An OCP node foo1 behaves unexpectedly when it doesn't meet "
+                                   "the minimum resource requirements",
                     "resolution": "Red Hat recommends that you configure your nodes to meet the "
                     "minimum resource requirements.Make sure that:1. Node foo1 ("
                     "undefined) * Has enough memory, minimum requirement is 16. "
@@ -157,8 +173,11 @@ def test_render_reports():
                     "configured with 8.16.",
                 },
                 {
-                    "rule_id": "samples_op_failed_image_import_check",
+                    "rule_id": "ccx_rules_ocp.external.rules.samples_op_failed_image_import_check",
                     "error_key": "SAMPLES_FAILED_IMAGE_IMPORT_ERR",
+                    "description": "Pods could fail to start if openshift-samples is degraded "
+                                   "due to FailedImageImport which is caused by a hiccup while "
+                                   "talking to the Red Hat registry",
                     "resolution": "Red Hat recommends that you to follow these steps:1. Fix 1, "
                     "Try running:~~~# oc import-image <for the ImageStream(s) in "
                     "question>~~~1. Fix 2, Try running:~~~# oc delete "
@@ -171,8 +190,10 @@ def test_render_reports():
                     "imagestreams: php - *Last* Transition: 2020-03-19T08:32:53Z",
                 },
                 {
-                    "rule_id": "cluster_wide_proxy_auth_check",
+                    "rule_id": "ccx_rules_ocp.external.rules.cluster_wide_proxy_auth_check",
                     "error_key": "AUTH_OPERATOR_PROXY_ERROR",
+                    "description": "The authentication operator is degraded when cluster "
+                                   "is configured to use a cluster-wide proxy",
                     "resolution": "Red Hat recommends that you to follow steps in the KCS "
                     "article. * [Authentication operator Degraded with Reason "
                     "`WellKnownEndpointDegradedError`]("
