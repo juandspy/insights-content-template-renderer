@@ -34,7 +34,7 @@ def get_reported_module(report):
     """
     if "component" not in report.keys():
         raise ValueError("'component' key is not present in report data")
-    return report["component"][0:report["component"].rfind(".")]
+    return report["component"][0 : report["component"].rfind(".")]
 
 
 def get_reported_error_key(report):
@@ -47,6 +47,7 @@ def get_reported_error_key(report):
     if "key" not in report.keys():
         raise ValueError("'key' key is not present in report data")
     return report["key"]
+
 
 def get_template_function(template_name, template_text, report):
     """
@@ -82,10 +83,15 @@ def render_description(rule_content, report):
     reported_error_key = get_reported_error_key(report)
     error_key_content = rule_content["error_keys"][reported_error_key]
 
-    if "description" in error_key_content["metadata"] and error_key_content["metadata"]["description"]:
+    if (
+        "description" in error_key_content["metadata"]
+        and error_key_content["metadata"]["description"]
+    ):
         template_text = error_key_content["metadata"]["description"]
 
-    description_template = get_template_function("metadata.description", template_text, report)
+    description_template = get_template_function(
+        "metadata.description", template_text, report
+    )
     log.info(description_template(report["details"]))
     print(description_template(report["details"]))
     return description_template(report["details"])
@@ -108,7 +114,7 @@ def render_resolution(rule_content, report):
         template_text = error_key_content["resolution"]
 
     resolution_template = get_template_function("resolution", template_text, report)
-    log.info(report['details'])
+    log.info(report["details"])
     return resolution_template(report["details"])
 
 
@@ -201,11 +207,16 @@ def render_reports(request_data):
             try:
                 report_result = render_report(content, report)
                 result["reports"].setdefault(cluster_id, []).append(report_result)
-            except (ValueError, RuleNotFoundException, TemplateNotFoundException) as exception:
+            except (
+                ValueError,
+                RuleNotFoundException,
+                TemplateNotFoundException,
+            ) as exception:
                 log.debug(exception)
                 log.debug(
                     "The report for rule '%s' and error key '%s' could not be processed.",
-                    get_reported_module(report), get_reported_error_key(report)
+                    get_reported_module(report),
+                    get_reported_error_key(report),
                 )
 
     log.info("The reports from the request have been processed")

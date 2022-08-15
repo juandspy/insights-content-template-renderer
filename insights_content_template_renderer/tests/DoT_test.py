@@ -14,4 +14,7 @@ def test_single_quote_correct_handling():
     """
     template = "An OCP node behaves unexpectedly when it doesn't meet the minimum resource requirements"
     text = js2py.eval_js(DoT.template(template, DoT_settings))()
-    assert text == "An OCP node behaves unexpectedly when it doesn't meet the minimum resource requirements"
+    assert (
+        text
+        == "An OCP node behaves unexpectedly when it doesn't meet the minimum resource requirements"
+    )

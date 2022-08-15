@@ -99,6 +99,7 @@ def test_render_reason():
         "but the node is configured with 8.16."
     )
 
+
 def test_render_description():
     """
     Checks that render_reason() function renders reason correctly.
@@ -109,7 +110,8 @@ def test_render_description():
     report = cluster_reports["reports"][0].copy()
     rule_content = test_data["content"][2]
     assert (
-        utils.render_description(rule_content, report) == "An OCP node foo1 behaves unexpectedly when it doesn't meet the minimum resource requirements"
+        utils.render_description(rule_content, report)
+        == "An OCP node foo1 behaves unexpectedly when it doesn't meet the minimum resource requirements"
     )
 
 
@@ -163,7 +165,7 @@ def test_render_reports():
                     "rule_id": "ccx_rules_ocp.external.rules.nodes_requirements_check",
                     "error_key": "NODES_MINIMUM_REQUIREMENTS_NOT_MET",
                     "description": "An OCP node foo1 behaves unexpectedly when it doesn't meet "
-                                   "the minimum resource requirements",
+                    "the minimum resource requirements",
                     "resolution": "Red Hat recommends that you configure your nodes to meet the "
                     "minimum resource requirements.Make sure that:1. Node foo1 ("
                     "undefined) * Has enough memory, minimum requirement is 16. "
@@ -176,8 +178,8 @@ def test_render_reports():
                     "rule_id": "ccx_rules_ocp.external.rules.samples_op_failed_image_import_check",
                     "error_key": "SAMPLES_FAILED_IMAGE_IMPORT_ERR",
                     "description": "Pods could fail to start if openshift-samples is degraded "
-                                   "due to FailedImageImport which is caused by a hiccup while "
-                                   "talking to the Red Hat registry",
+                    "due to FailedImageImport which is caused by a hiccup while "
+                    "talking to the Red Hat registry",
                     "resolution": "Red Hat recommends that you to follow these steps:1. Fix 1, "
                     "Try running:~~~# oc import-image <for the ImageStream(s) in "
                     "question>~~~1. Fix 2, Try running:~~~# oc delete "
@@ -193,7 +195,7 @@ def test_render_reports():
                     "rule_id": "ccx_rules_ocp.external.rules.cluster_wide_proxy_auth_check",
                     "error_key": "AUTH_OPERATOR_PROXY_ERROR",
                     "description": "The authentication operator is degraded when cluster "
-                                   "is configured to use a cluster-wide proxy",
+                    "is configured to use a cluster-wide proxy",
                     "resolution": "Red Hat recommends that you to follow steps in the KCS "
                     "article. * [Authentication operator Degraded with Reason "
                     "`WellKnownEndpointDegradedError`]("
