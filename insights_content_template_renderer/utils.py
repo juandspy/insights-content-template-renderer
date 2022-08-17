@@ -68,7 +68,6 @@ def get_template_function(template_name, template_text, report):
         )
     log.info(template_text)
     log.info(DoT.template(template_text, DoT_settings))
-    print(DoT.template(template_text, DoT_settings))
     return js2py.eval_js(DoT.template(template_text, DoT_settings))
 
 
@@ -89,11 +88,12 @@ def render_description(rule_content, report):
     ):
         template_text = error_key_content["metadata"]["description"]
 
-    description_template = get_template_function(
-        "metadata.description", template_text, report
-    )
-    log.info(description_template(report["details"]))
-    print(description_template(report["details"]))
+    try:
+        description_template = get_template_function(
+            "metadata.description", template_text, report
+        )
+    except TemplateNotFoundException:
+        return ""
     return description_template(report["details"])
 
 
@@ -113,8 +113,10 @@ def render_resolution(rule_content, report):
     if "resolution" in error_key_content and error_key_content["resolution"]:
         template_text = error_key_content["resolution"]
 
-    resolution_template = get_template_function("resolution", template_text, report)
-    log.info(report["details"])
+    try:
+        resolution_template = get_template_function("resolution", template_text, report)
+    except TemplateNotFoundException:
+        return ""
     return resolution_template(report["details"])
 
 
@@ -134,7 +136,10 @@ def render_reason(rule_content, report):
     if "reason" in error_key_content and error_key_content["reason"]:
         template_text = error_key_content["reason"]
 
-    reason_template = get_template_function("reason", template_text, report)
+    try:
+        reason_template = get_template_function("reason", template_text, report)
+    except TemplateNotFoundException:
+        return ""
     return reason_template(report["details"])
 
 
