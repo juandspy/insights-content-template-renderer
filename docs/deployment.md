@@ -6,26 +6,18 @@
 
 1. Install `bonfire`
 ```
-❯ pip install crc-bonfire
+pip install crc-bonfire
 ```
 
 2. Log into https://console-openshift-console.apps.c-rh-c-eph.8p0c.p1.openshiftapps.com/k8s/cluster/projects
 
 ```
-❯ oc login --token=${TOKEN} --server=https://api.c-rh-c-eph.8p0c.p1.openshiftapps.com:6443
+oc login --token=${TOKEN} --server=https://api.c-rh-c-eph.8p0c.p1.openshiftapps.com:6443
 ```
 
 3. Reserve a namespace
 ```
-❯ NAMESPACE=$(bonfire namespace reserve)
-2022-09-15 16:17:08 [    INFO] [          MainThread] Attempting to reserve a namespace...
-2022-09-15 16:17:09 [    INFO] [          MainThread] Checking for existing reservations for '{USER}'
-2022-09-15 16:17:10 [    INFO] [          MainThread] processing namespace reservation
-2022-09-15 16:17:10 [    INFO] [          MainThread] running (pid 62954): oc apply -f - 
-2022-09-15 16:17:13 [    INFO] [           pid-62954]  |stdout| namespacereservation.cloud.redhat.com/bonfire-reservation-233828c7 created
-2022-09-15 16:17:13 [    INFO] [          MainThread] waiting for reservation 'bonfire-reservation-233828c7' to get picked up by operator
-2022-09-15 16:17:13 [    INFO] [          MainThread] namespace '{NAMESPACE}' is reserved by '{USER}' for '1h' from the default pool
-2022-09-15 16:17:14 [    INFO] [          MainThread] namespace console url: https://console-openshift-console.apps.c-rh-c-eph.8p0c.p1.openshiftapps.com/k8s/cluster/projects/{NAMESPACE}
+NAMESPACE=$(bonfire namespace reserve)
 ```
 
 4. Deploy the renderer
