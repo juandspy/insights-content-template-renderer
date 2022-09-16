@@ -2,7 +2,7 @@
 
 ## Testing the local version of the service in ephemeral
 
-[demo](https://asciinema.org/a/uMQESE4ay2ok7oQWr04slhuWw)
+[![asciicast](https://asciinema.org/a/uMQESE4ay2ok7oQWr04slhuWw.svg)](https://asciinema.org/a/uMQESE4ay2ok7oQWr04slhuWw)
 
 1. Install `bonfire`
 ```
