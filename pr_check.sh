@@ -27,8 +27,9 @@ COMPONENTS_W_RESOURCES="insights-content-template-renderer"  # component to keep
 CACHE_FROM_LATEST_IMAGE="true"
 
 export IQE_PLUGINS="ccx"
-export IQE_MARKER_EXPRESSION="smoke" # ccx_data_pipeline_smoke does not exits (at least yet) as marker in the plugin
-export IQE_FILTER_EXPRESSION=""
+export IQE_MARKER_EXPRESSION=""
+# Workaround: There are no specific integration tests. Check that the service loads and iqe plugin works.
+export IQE_FILTER_EXPRESSION="test_plugin_accessible"
 export IQE_REQUIREMENTS_PRIORITY=""
 export IQE_TEST_IMPORTANCE=""
 export IQE_CJI_TIMEOUT="30m"
