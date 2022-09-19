@@ -3,6 +3,8 @@
 This service provides the endpoint for rendering the report messages based on the DoT.js templates from content data and report details.
 For that purpose it uses the implementation of [DoT.js framework in Python](https://github.com/lucemia/doT).
 
+Check the [docs](docs/) folder for more information about this service.
+
 ## Running the service
 
 The service can be run either locally:
@@ -28,7 +30,7 @@ The service takes JSON data as input in the format
 ```
 {
 	"content": ... data from content service endpoint /content ...
-	"report-data": ... data from aggregator service endpint /clusters/{clusterIds}/reports ...
+	"report-data": ... data from aggregator service endpoint /clusters/{clusterIds}/reports ...
 }
 ```
 
