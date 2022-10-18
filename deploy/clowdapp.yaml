@@ -27,6 +27,8 @@ objects:
     name: insights-content-template-renderer
     labels:
       app: insights-content-template-renderer
+    annotations:
+      ignore-check.kube-linter.io/minimum-three-replicas: "This app doesn't have that much traffic"
   spec:
     envName: ${ENV_NAME}
     testing:
