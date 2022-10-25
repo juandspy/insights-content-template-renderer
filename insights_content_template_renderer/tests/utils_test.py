@@ -76,8 +76,8 @@ def test_render_resolution():
     report = cluster_reports["reports"][0].copy()
     rule_content = test_data["content"][2].copy()
     result = (
-        "Red Hat recommends that you configure your nodes to meet the minimum resource "
-        "requirements.Make sure that:1. Node foo1 (undefined) * Has enough memory, "
+        "Red Hat recommends that you configure your nodes to meet the minimum resource " +
+        "requirements.\n\nMake sure that:\n\n1. Node foo1 (undefined) * Has enough memory, " +
         "minimum requirement is 16. Currently its only configured with 8.16GB."
     )
     assert utils.render_resolution(rule_content, report) == result
