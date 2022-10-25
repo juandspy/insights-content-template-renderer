@@ -18,3 +18,13 @@ def test_single_quote_correct_handling():
         text
         == "An OCP node behaves unexpectedly when it doesn't meet the minimum resource requirements"
     )
+
+
+def test_newline_correct_handling():
+    """
+    Checks that DoT template function escapes single quotes
+    before creating a JS function out of them.
+    """
+    template = "This is a line\nAnd this is another line"
+    text = js2py.eval_js(DoT.template(template, DoT_settings))()
+    assert text == "This is a line\nAnd this is another line"
