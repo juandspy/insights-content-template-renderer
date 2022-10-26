@@ -66,8 +66,6 @@ def get_template_function(template_name, template_text, report):
             f"Template '{template_name}' has not been found for rule '{reported_module}' "
             + f"and error key '{reported_error_key}'."
         )
-    log.info(template_text)
-    log.info(DoT.template(template_text, DoT_settings))
     return js2py.eval_js(DoT.template(template_text, DoT_settings))
 
 
