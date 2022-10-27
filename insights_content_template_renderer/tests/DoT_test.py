@@ -20,11 +20,17 @@ def test_single_quote_correct_handling():
     )
 
 
-def test_newline_correct_handling():
+def test_nonletter_characters_correct_handling():
     """
-    Checks that DoT template function escapes single quotes
-    before creating a JS function out of them.
+    Checks that DoT.template function does not remove characters like
+    escape characers and single quotes from the given input if strip is
+    set to False
     """
-    template = "This is a line\nAnd this is another line"
-    text = js2py.eval_js(DoT.template(template, DoT_settings))()
-    assert text == "This is a line\nAnd this is another line"
+    input = r"Red Hat recommends that you configure your nodes to meet the minimum resource requirements.\n\nMake " \
+            r"sure that:\n\n1. Node foo1 (undefined) * Has enough memory, minimum requirement is 16. Currently its " \
+            r"only configured with 8.16GB. "
+
+    DoT_settings['strip'] = False
+
+    text = js2py.eval_js(DoT.template(input, DoT_settings))()
+    assert text == input

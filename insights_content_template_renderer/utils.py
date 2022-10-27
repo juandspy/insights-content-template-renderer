@@ -49,6 +49,14 @@ def get_reported_error_key(report):
     return report["key"]
 
 
+def escape_raw_text_for_JS(text):
+    """
+    Escapes all the escape characters like whitespace, newline, tabulation,
+    etc, as well as single quotes.
+    """
+    return text.encode("unicode_escape").decode()
+
+
 def get_template_function(template_name, template_text, report):
     """
     Retrieves the DoT.js template based on the name of the field in the given content data
@@ -66,7 +74,10 @@ def get_template_function(template_name, template_text, report):
             f"Template '{template_name}' has not been found for rule '{reported_module}' "
             + f"and error key '{reported_error_key}'."
         )
-    return js2py.eval_js(DoT.template(template_text, DoT_settings))
+    log.info(template_text)
+    template = DoT.template(escape_raw_text_for_JS(template_text), DoT_settings)
+    log.info(template)
+    return js2py.eval_js(template)
 
 
 def render_description(rule_content, report):

@@ -27,14 +27,14 @@ Source: https://github.com/lucemia/doT
 
 import re
 
-version = '1.0.0'
+version = "1.0.0"
 template_settings = {
     "evaluate": r"\{\{([\s\S]+?\}?)\}\}",
     "interpolate": r"\{\{=([\s\S]+?)\}\}",
     "encode": r"\{\{!([\s\S]+?)\}\}",
     "use": r"\{\{#([\s\S]+?)\}\}",
     "useParams": r"(^|[^\w$])def(?:\.|\[[\'\"])([\w$\.]+)(?:[\'\"]\])?\s*\:\s*([\w$\.]+|\"["
-                 r"^\"]+\"|\'[^\']+\'|\{[^\}]+\})",
+    r"^\"]+\"|\'[^\']+\'|\{[^\}]+\})",
     "define": r"\{\{##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\}\}",
     "defineParams": r"^\s*([\w$]+):([\s\S]+)",
     "conditional": r"\{\{\?(\?)?\s*([\s\S]*?)\s*\}\}",
@@ -42,19 +42,19 @@ template_settings = {
     "varname": "it",
     "strip": False,
     "append": True,
-    "selfcontained": False
+    "selfcontained": False,
 }
 
 startend = {
     "append": {
         "start": "'+(",
         "end": ")+'",
-        "endencode": "||'').toString().encodeHTML()+'"
+        "endencode": "||'').toString().encodeHTML()+'",
     },
     "split": {
         "start": "';out+=(",
         "end": ");out+='",
-        "endencode": "||'').toString().encodeHTML();out+='"
+        "endencode": "||'').toString().encodeHTML();out+='",
     },
 }
 
@@ -68,7 +68,7 @@ def resolve_defs(c, tmpl, _def):
 
 
 def unescape(code):
-    return re.sub(r"[\r\t\n]", ' ', re.sub(r"\\(['\\])", r"\1", code))
+    return re.sub(r"[\r\t\n]", " ", re.sub(r"\\(['\\])", r"\1", code))
 
 
 def template(tmpl, c=None, _def=None):
@@ -83,7 +83,7 @@ def template(tmpl, c=None, _def=None):
         return cse["start"] + unescape(code) + cse["end"]
 
     def _encode(code):
-        return cse['start'] + unescape(code) + cse["endencode"]
+        return cse["start"] + unescape(code) + cse["endencode"]
 
     def _conditional(elsecode, code):
         if elsecode:
@@ -98,7 +98,7 @@ def template(tmpl, c=None, _def=None):
                 return "';}out+='"
 
     def _iterate(iterate, vname, iname, sid=sid):
-        if (not iterate or not vname):
+        if not iterate or not vname:
             return "';} } out+='"
 
         sid += 1
@@ -106,43 +106,69 @@ def template(tmpl, c=None, _def=None):
         iterate = unescape(iterate)
 
         _sid = str(sid)
-#        print iterate, vname, iname, _sid
+        #        print iterate, vname, iname, _sid
 
-        return "';var arr" + _sid + "=" + iterate + ";if(arr" + _sid + "){var " \
-               + vname + "," + indv + "=-1,l" + _sid + "=arr" + _sid + ".length-1;while(" \
-               + indv + "<l" + _sid + "){" + vname + "=arr" + _sid + "[" + indv + "+=1];out+='"
+        return (
+            "';var arr"
+            + _sid
+            + "="
+            + iterate
+            + ";if(arr"
+            + _sid
+            + "){var "
+            + vname
+            + ","
+            + indv
+            + "=-1,l"
+            + _sid
+            + "=arr"
+            + _sid
+            + ".length-1;while("
+            + indv
+            + "<l"
+            + _sid
+            + "){"
+            + vname
+            + "=arr"
+            + _sid
+            + "["
+            + indv
+            + "+=1];out+='"
+        )
 
     def _evalute(code):
         return "';" + unescape(code) + "out+='"
 
     _str = resolve_defs(c, tmpl, _def or {}) if (c["use"] or c["define"]) else tmpl
 
-    if c.get('strip'):
+    if c.get("strip"):
         # remove white space
         _str = re.sub(r"(^|\r|\n)\t* +| +\t*(\r|\n|$)", " ", _str)
-        _str = re.sub(r"\r|\n|\t|/\*[\s\S]*?\*/", '', _str)
+        _str = re.sub(r"\r|\n|\t|/\*[\s\S]*?\*/", "", _str)
 
     _str = re.sub(r"('|\\)", r"\\\1", _str)
 
-    if c.get('interpolate'):
-        _str = re.sub(c['interpolate'], lambda i: _interpolate(i.groups()[0]), _str)
+    if c.get("interpolate"):
+        _str = re.sub(c["interpolate"], lambda i: _interpolate(i.groups()[0]), _str)
 
-    if c.get('encode'):
-        _str = re.sub(c['encode'], lambda i: _encode(i.groups()[0]), _str)
+    if c.get("encode"):
+        _str = re.sub(c["encode"], lambda i: _encode(i.groups()[0]), _str)
 
-    if c.get('conditional'):
-        _str = re.sub(c['conditional'], lambda i: _conditional(i.groups()[0], i.groups()[1]), _str)
-
-    if c.get('iterate'):
+    if c.get("conditional"):
         _str = re.sub(
-            c['iterate'],
-            lambda i: _iterate(
-                i.groups()[0],
-                i.groups()[1],
-                i.groups()[2]),
-            _str)
+            c["conditional"], lambda i: _conditional(i.groups()[0], i.groups()[1]), _str
+        )
 
-    if c.get('evaluate'):
-        _str = re.sub(c['evaluate'], lambda i: _evalute(i.groups()[0]), _str)
+    if c.get("iterate"):
+        _str = re.sub(
+            c["iterate"],
+            lambda i: _iterate(i.groups()[0], i.groups()[1], i.groups()[2]),
+            _str,
+        )
 
-    return "function anonymous(" + c["varname"] + ") {var out='" + _str + "';return out;}"
+    if c.get("evaluate"):
+        _str = re.sub(c["evaluate"], lambda i: _evalute(i.groups()[0]), _str)
+
+    return (
+        "function anonymous(" + c["varname"] + ") {var out='" + _str + "';return out;}"
+    )
