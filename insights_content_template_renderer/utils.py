@@ -49,12 +49,20 @@ def get_reported_error_key(report):
     return report["key"]
 
 
-def escape_raw_text_for_JS(text):
+def escape_raw_text_for_js(text):
     """
     Escapes all the escape characters like whitespace, newline, tabulation,
     etc, as well as single quotes.
     """
     return text.encode("unicode_escape").decode()
+
+
+def unescape_raw_text_for_python(text):
+    """
+    Undoes all the escaping of special characters like whitespace, newline, tabulation,
+    etc, as well as single quotes.
+    """
+    return text.encode().decode('unicode-escape')
 
 
 def get_template_function(template_name, template_text, report):
@@ -75,8 +83,7 @@ def get_template_function(template_name, template_text, report):
             + f"and error key '{reported_error_key}'."
         )
     log.info(template_text)
-    template = DoT.template(escape_raw_text_for_JS(template_text), DoT_settings)
-    log.info(template)
+    template = DoT.template(escape_raw_text_for_js(template_text), DoT_settings)
     return js2py.eval_js(template)
 
 
@@ -103,7 +110,7 @@ def render_description(rule_content, report):
         )
     except TemplateNotFoundException:
         return ""
-    return description_template(report["details"])
+    return unescape_raw_text_for_python(description_template(report["details"]))
 
 
 def render_resolution(rule_content, report):
@@ -126,7 +133,7 @@ def render_resolution(rule_content, report):
         resolution_template = get_template_function("resolution", template_text, report)
     except TemplateNotFoundException:
         return ""
-    return resolution_template(report["details"])
+    return unescape_raw_text_for_python(resolution_template(report["details"]))
 
 
 def render_reason(rule_content, report):
@@ -149,7 +156,7 @@ def render_reason(rule_content, report):
         reason_template = get_template_function("reason", template_text, report)
     except TemplateNotFoundException:
         return ""
-    return reason_template(report["details"])
+    return unescape_raw_text_for_python(reason_template(report["details"]))
 
 
 def render_report(content, report):
