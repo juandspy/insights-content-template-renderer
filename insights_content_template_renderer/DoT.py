@@ -27,7 +27,6 @@ Source: https://github.com/lucemia/doT
 
 import re
 
-
 version = '1.0.0'
 template_settings = {
     "evaluate": r"\{\{([\s\S]+?\}?)\}\}",
@@ -41,11 +40,10 @@ template_settings = {
     "conditional": r"\{\{\?(\?)?\s*([\s\S]*?)\s*\}\}",
     "iterate": r"\{\{~\s*(?:\}\}|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\}\})",
     "varname": "it",
-    "strip": True,
+    "strip": False,
     "append": True,
     "selfcontained": False
 }
-
 
 startend = {
     "append": {
@@ -117,7 +115,7 @@ def template(tmpl, c=None, _def=None):
     def _evalute(code):
         return "';" + unescape(code) + "out+='"
 
-    _str = resolve_defs(c, tmpl, _def or {}) if(c["use"] or c["define"]) else tmpl
+    _str = resolve_defs(c, tmpl, _def or {}) if (c["use"] or c["define"]) else tmpl
 
     if c.get('strip'):
         # remove white space
