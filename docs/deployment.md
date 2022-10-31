@@ -36,7 +36,7 @@ oc --namespace $NAMESPACE run curl -i --rm \
         echo '[INFO] Downloading a request data example' && \
         curl -s https://raw.githubusercontent.com/RedHatInsights/insights-content-template-renderer/main/insights_content_template_renderer/tests/request_data_example.json > /tmp/req.json && \
         echo '[INFO] Testing the service' && \
-        curl -s -X POST -H 'Content-Type: application/json' -d @/tmp/req.json insights-content-template-renderer-svc:8000/rendered_reports | /tmp/jq && \
+        curl -s -X POST -H 'Content-Type: application/json' -d @/tmp/req.json insights-content-template-renderer-svc:8000/v1/rendered_reports | /tmp/jq && \
         echo '' && \
         echo '[INFO] Testing finished'
     "
