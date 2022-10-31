@@ -10,7 +10,7 @@ app = FastAPI()
 log = logging.getLogger(__name__)
 
 
-@app.post("/rendered_reports")
+@app.post("/v1/rendered_reports")
 async def rendered_reports(request: Request):
     """
     Endpoint for rendering reports based on DoT.js content templates and report details.
