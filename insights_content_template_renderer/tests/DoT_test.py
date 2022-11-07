@@ -1,10 +1,11 @@
 import js2py
 
 from insights_content_template_renderer import DoT
-from insights_content_template_renderer.DoT import template_settings
+from insights_content_template_renderer.DoT import DEFAULT_TEMPLATE_SETTINGS
 
 
-DoT_settings = template_settings
+DoT_settings = DEFAULT_TEMPLATE_SETTINGS
+renderer = DoT.Renderer()
 
 
 def test_single_quote_correct_handling():
@@ -13,7 +14,7 @@ def test_single_quote_correct_handling():
     before creating a JS function out of them.
     """
     template = "An OCP node behaves unexpectedly when it doesn't meet the minimum resource requirements"
-    text = js2py.eval_js(DoT.template(template, DoT_settings))()
+    text = js2py.eval_js(renderer.template(template, DoT_settings))()
     assert (
         text
         == "An OCP node behaves unexpectedly when it doesn't meet the minimum resource requirements"
@@ -32,5 +33,5 @@ def test_nonletter_characters_correct_handling():
 
     DoT_settings['strip'] = False
 
-    text = js2py.eval_js(DoT.template(input, DoT_settings))()
+    text = js2py.eval_js(renderer.template(input, DoT_settings))()
     assert text == input
