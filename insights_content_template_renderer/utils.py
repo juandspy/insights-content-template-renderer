@@ -5,11 +5,12 @@ Provides all business logic for this service.
 import logging
 import js2py
 from insights_content_template_renderer import DoT
-from insights_content_template_renderer.DoT import template_settings
+from insights_content_template_renderer.DoT import DEFAULT_TEMPLATE_SETTINGS
 
-DoT_settings = template_settings
+DoT_settings = DEFAULT_TEMPLATE_SETTINGS
 DoT_settings["varname"] = "pydata"
 log = logging.getLogger(__name__)
+renderer = DoT.Renderer()
 
 
 class RuleNotFoundException(Exception):
@@ -83,7 +84,8 @@ def get_template_function(template_name, template_text, report):
             + f"and error key '{reported_error_key}'."
         )
     log.info(template_text)
-    template = DoT.template(escape_raw_text_for_js(template_text), DoT_settings)
+
+    template = renderer.template(escape_raw_text_for_js(template_text), DoT_settings)
     return js2py.eval_js(template)
 
 
