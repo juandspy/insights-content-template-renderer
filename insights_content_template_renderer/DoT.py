@@ -97,7 +97,8 @@ def template(tmpl, c=None, _def=None):
             else:
                 return "';}out+='"
 
-    def _iterate(iterate, vname, iname, sid=sid):
+    def _iterate(iterate, vname, iname):
+        nonlocal sid
         if not iterate or not vname:
             return "';} } out+='"
 

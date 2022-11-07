@@ -84,7 +84,7 @@ def test_render_resolution():
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
     report = cluster_reports["reports"][0].copy()
-    rule_content = test_data["content"][2].copy()
+    rule_content = test_data["content"][3].copy()
     result = "Red Hat recommends that you configure your nodes to meet the minimum resource requirements.\n\nMake " \
              "sure that:\n\n\n1. Node foo1 (undefined)\n   * Has enough memory, minimum requirement is 16. Currently " \
              "its only configured with 8.16GB.\n"
@@ -101,7 +101,7 @@ def test_render_reason():
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
     report = cluster_reports["reports"][0].copy()
-    rule_content = test_data["content"][2]
+    rule_content = test_data["content"][3]
     rendered = utils.render_reason(rule_content, report)
     result = "Node not meeting the minimum " \
              "requirements:\n\n1. foo1\n  * Roles: undefined\n  * " \
@@ -117,7 +117,7 @@ def test_render_description():
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
     report = cluster_reports["reports"][0].copy()
-    rule_content = test_data["content"][2]
+    rule_content = test_data["content"][3]
     result = "An OCP node foo1 behaves unexpectedly when it doesn't meet the minimum resource requirements"
     rendered = utils.render_description(rule_content, report)
 
@@ -158,7 +158,7 @@ def test_render_report_missing_rule_content():
     ]
     report = cluster_reports["reports"][0].copy()
     content = test_data["content"].copy()
-    del content[2]
+    del content[3]
     with pytest.raises(utils.RuleNotFoundException):
         utils.render_report(content, report)
 
@@ -186,6 +186,13 @@ def test_render_reports():
                     'resolution': "Red Hat recommends that you to follow these steps:\n\n1. Fix 1, Try running:\n~~~\n# oc import-image <for the ImageStream(s) in question>\n~~~\n\n1. Fix 2, Try running:\n~~~\n# oc delete configs.samples cluster\n~~~",
                     'reason': "Due to a temporary hiccup talking to the Red Hat registry the openshift-samples failed to import some of the imagestreams.\n\n\nSource of the issue:\n\n**Cluster-operator:**  **openshift-samples**\n- *Condition:* Degraded\n- *Reason:* FailedImageImports\n- *Message:* Samples installed at 4.2.0, with image import failures for these imagestreams: php \n- *Last* Transition: 2020-03-19T08:32:53Z\n",
                     'description': "Pods could fail to start if openshift-samples is degraded due to FailedImageImport which is caused by a hiccup while talking to the Red Hat registry"
+                },
+                {
+                    'rule_id': 'ccx_rules_ocp.external.rules.namespaces_with_overlapping_uid_ranges',
+                    'error_key': 'NAMESPACES_WITH_OVERLAPPING_UID_RANGES',
+                    'resolution': 'Red Hat recommends that you resolve the issue by following the steps in the [Knowledgebase Article](https://access.redhat.com/articles/6844071).',
+                    'description': 'Namespaces with collision UID ranges do not meet the compliance requirements with many industry standards',
+                    'reason': 'The following namespaces are detected to have collision UID ranges. Namespaces with collision UID ranges do not meet the compliance requirements with many industry standards. In some serious situations, it could lead to data exposure.\n\n\n- Namespaces: \n**openshift**, \n**test-1**, \n**test-2**, \n\n- Namespaces: \n**openshift-ingress-canary**, \n**test-3**, \n\n- Namespaces: \n**test-4**, \n**test-5**, \n**test-6**, \n'
                 },
                 {
                     'rule_id': 'ccx_rules_ocp.external.rules.cluster_wide_proxy_auth_check',
