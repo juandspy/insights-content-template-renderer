@@ -4,10 +4,20 @@ Contains service endpoints.
 
 import logging
 from fastapi import Request, FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
+
+
 from insights_content_template_renderer.utils import render_reports
 
 app = FastAPI()
 log = logging.getLogger(__name__)
+
+
+@app.on_event("startup")
+async def expose_metrics():
+    """Expose the prometheus metrics in the /metrics endpoint."""
+    log.info("Metrics available at /metrics")
+    Instrumentator().instrument(app).expose(app)
 
 
 @app.post("/rendered_reports")

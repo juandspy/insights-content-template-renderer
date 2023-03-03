@@ -77,7 +77,11 @@ objects:
 - kind: Service
   apiVersion: v1
   metadata:
-    # TODO: add prometheus annotations when we have metrics available
+    annotations:
+      prometheus.io/path: /metrics
+      prometheus.io/port: "8000"
+      prometheus.io/scheme: http
+      prometheus.io/scrape: "true"
     name: insights-content-template-renderer-svc
     labels:
       app: insights-content-template-renderer
