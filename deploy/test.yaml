@@ -23,7 +23,7 @@ appsFile:
   path: bonfire_configs/ephemeral_apps.yaml
 
 apps:
-- name: insights-content-template-renderer
+- name: ccx-data-pipeline
   components:
     - name:  insights-content-template-renderer
       host: local
