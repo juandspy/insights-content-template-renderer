@@ -22,7 +22,7 @@ NAMESPACE=$(bonfire namespace reserve)
 
 4. Deploy the renderer
 ```
-bonfire deploy -c deploy/test.yaml -n $NAMESPACE insights-content-template-renderer
+bonfire deploy -c deploy/test.yaml -n $NAMESPACE ccx-data-pipeline
 ```
 
 5. Make a request to the renderer
