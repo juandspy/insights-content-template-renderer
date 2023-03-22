@@ -13,11 +13,11 @@ app = FastAPI()
 log = logging.getLogger(__name__)
 
 
+instrumentator = Instrumentator().instrument(app)
+
 @app.on_event("startup")
 async def expose_metrics():
-    """Expose the prometheus metrics in the /metrics endpoint."""
-    log.info("Metrics available at /metrics")
-    Instrumentator().instrument(app).expose(app)
+    instrumentator.expose(app, endpoint='/metrics', tags=['metrics'])
 
 
 @app.post("/rendered_reports")
