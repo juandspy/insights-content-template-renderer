@@ -1,0 +1,7 @@
+{"clusters": ["5d5892d3-1f74-4ccf-91af-548dfc9767aa"
+  ], "reports": {"5d5892d3-1f74-4ccf-91af-548dfc9767aa": [
+      {"rule_id": "ccx_rules_ocp.external.rules.1", "error_key": "RULE_1", "resolution": "Red Hat recommends you to fix the issues with this node", "reason": "Node not working.", "description": "RULE_1 description foo1"
+      }
+    ]
+  }
+}

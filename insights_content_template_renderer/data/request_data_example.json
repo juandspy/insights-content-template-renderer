@@ -1,0 +1,94 @@
+{
+  "content": [
+    {
+      "plugin": {
+        "name": "",
+        "node_id": "",
+        "product_code": "",
+        "python_module": "ccx_rules_ocp.external.rules.1"
+      },
+      "error_keys": {
+        "RULE_1": {
+          "metadata": {
+            "description": "RULE_1 description {{~ pydata.nodes :node }}{{=node[\"name\"]}}{{~}}",
+            "impact": 2,
+            "likelihood": 3,
+            "publish_date": "2019-10-29 15:00:00",
+            "status": "active",
+            "tags": [
+              "openshift",
+              "configuration",
+              "performance"
+            ]
+          },
+          "total_risk": 2,
+          "generic": "",
+          "summary": "",
+          "resolution": "Red Hat recommends you to fix the issues with this node",
+          "more_info": "",
+          "reason": "Node{{?pydata.nodes.length>1}}s{{?}} not working.",
+          "HasReason": true
+        }
+      },
+      "generic": "",
+      "summary": "",
+      "resolution": "Red Hat recommends you to fix the issue with {{~ pydata.nodes :node }}",
+      "more_info": "For more information about this, refer to the [Documentation](https://docs.openshift.com)",
+      "reason": "Node{{?pydata.nodes.length>1}}s{{?}} not working",
+      "HasReason": true
+    }
+  ],
+  "report_data": {
+    "clusters": [
+      "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
+    ],
+    "errors": null,
+    "reports": {
+      "5d5892d3-1f74-4ccf-91af-548dfc9767aa": {
+        "fingerprints": [],
+        "info": [],
+        "pass": [],
+        "reports": [
+          {
+            "rule_id": "1|RULE_1",
+            "component": "ccx_rules_ocp.external.rules.1.report",
+            "type": "rule",
+            "key": "RULE_1",
+            "details": {
+              "nodes": [
+                {
+                  "name": "foo1",
+                  "role": "master",
+                  "memory": 8.16
+                }
+              ],
+              "link": "https://docs.openshift.com/",
+              "type": "rule",
+              "error_key": "RULE_1"
+            },
+            "tags": [],
+            "links": {
+              "docs": [
+                "https://docs.openshift.com"
+              ]
+            }
+          }
+        ],
+        "skips": [
+          {
+            "rule_fqdn": "ccx_rules_ocp.external.rules.0",
+            "reason": "RULE_0",
+            "details": "All: ['ccx_rules_ocp.external.rules.0'] Any: ",
+            "type": "skip"
+          }
+        ],
+        "system": {
+          "metadata": {},
+          "hostname": null
+        }
+      }
+    },
+    "generated_at": "",
+    "status": "ok"
+  }
+}

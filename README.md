@@ -23,7 +23,7 @@ and create a Docker container via
 
 As said, the service has the single endpoint:
 
-### [POST] /v1/rendered-reports
+### [POST] /v1/rendered_reports
 
 The service takes JSON data as input in the format
 
