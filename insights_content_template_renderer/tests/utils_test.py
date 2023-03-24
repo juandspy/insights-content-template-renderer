@@ -2,31 +2,20 @@
 Unit tests for utils.py
 """
 
-import json
-from pathlib import Path
 import pydantic
 from typing import List
 import pytest
 from insights_content_template_renderer import utils
 from insights_content_template_renderer.models import Report, Content, RendererRequest
 
-
-test_request_data = {}
-test_data_path = Path(__file__).with_name("request_data_example.json")
-with test_data_path.open(encoding="UTF-8") as f:
-    test_request_data = json.load(f)
-
-test_response_data = {}
-test_response_data = Path(__file__).with_name("response_data_example.json")
-with test_response_data.open(encoding="UTF-8") as f:
-    test_response_data = json.load(f)
+from insights_content_template_renderer.data import example_request_data
 
 
 def test_get_reported_error_key():
     """
     Checks that the get_reported_error_key() function parses reported error key correctly.
     """
-    cluster_reports = test_request_data["report_data"]["reports"][
+    cluster_reports = example_request_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
     report = Report.parse_obj(cluster_reports["reports"][0])
@@ -38,7 +27,7 @@ def test_get_reported_module():
     """
     Checks that the get_reported_module() function parses reported error key correctly.
     """
-    cluster_reports = test_request_data["report_data"]["reports"][
+    cluster_reports = example_request_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
     report = Report.parse_obj(cluster_reports["reports"][0])
@@ -61,11 +50,11 @@ def test_render_resolution():
     """
     Checks that the render_resolution() function renders resolution correctly.
     """
-    cluster_reports = test_request_data["report_data"]["reports"][
+    cluster_reports = example_request_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
     report = Report.parse_obj(cluster_reports["reports"][0])
-    rule_content = Content.parse_obj(test_request_data["content"][3])
+    rule_content = Content.parse_obj(example_request_data["content"][3])
     result = "Red Hat recommends that you configure your nodes to meet the minimum resource requirements.\n\nMake " \
              "sure that:\n\n\n1. Node foo1 (undefined)\n   * Has enough memory, minimum requirement is 16. Currently " \
              "its only configured with 8.16GB.\n"
@@ -78,11 +67,11 @@ def test_render_reason():
     """
     Checks that render_reason() function renders reason correctly.
     """
-    cluster_reports = test_request_data["report_data"]["reports"][
+    cluster_reports = example_request_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
     report = Report.parse_obj(cluster_reports["reports"][0])
-    rule_content = Content.parse_obj(test_request_data["content"][3])
+    rule_content = Content.parse_obj(example_request_data["content"][3])
     rendered = utils.render_reason(rule_content, report)
     result = "Node not meeting the minimum " \
              "requirements:\n\n1. foo1\n  * Roles: undefined\n  * " \
@@ -94,11 +83,11 @@ def test_render_description():
     """
     Checks that render_reason() function renders reason correctly.
     """
-    cluster_reports = test_request_data["report_data"]["reports"][
+    cluster_reports = example_request_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
     report = Report.parse_obj(cluster_reports["reports"][0])
-    rule_content = Content.parse_obj(test_request_data["content"][3])
+    rule_content = Content.parse_obj(example_request_data["content"][3])
     result = "An OCP node foo1 behaves unexpectedly when it doesn't meet the minimum resource requirements"
     rendered = utils.render_description(rule_content, report)
 
@@ -110,11 +99,11 @@ def test_render_report():
     """
     Checks that render_report() renders the whole report correctly.
     """
-    cluster_reports = test_request_data["report_data"]["reports"][
+    cluster_reports = example_request_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
     report = Report.parse_obj(cluster_reports["reports"][0])
-    contents = pydantic.parse_obj_as(List[Content], test_request_data["content"])
+    contents = pydantic.parse_obj_as(List[Content], example_request_data["content"])
     result = {
         "rule_id": "ccx_rules_ocp.external.rules.nodes_requirements_check",
         "error_key": "NODES_MINIMUM_REQUIREMENTS_NOT_MET",
@@ -134,11 +123,11 @@ def test_render_report_missing_rule_content():
     Checks that render_report() function raises exception in case
     that content for the reported rule is missing.
     """
-    cluster_reports = test_request_data["report_data"]["reports"][
+    cluster_reports = example_request_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
     report = Report.parse_obj(cluster_reports["reports"][0])
-    contents = test_request_data["content"].copy()
+    contents = example_request_data["content"].copy()
     del contents[3]
     contents = pydantic.parse_obj_as(List[Content], contents)
     with pytest.raises(utils.RuleNotFoundException):
@@ -186,7 +175,7 @@ def test_render_reports():
             ]
         }
     }
-    req = RendererRequest.parse_obj(test_request_data)
+    req = RendererRequest.parse_obj(example_request_data)
     rendered = utils.render_reports(req)
     assert rendered == result
 

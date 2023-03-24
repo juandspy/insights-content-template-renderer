@@ -3,6 +3,9 @@ import uuid
 
 from pydantic import BaseModel
 
+from insights_content_template_renderer.data import \
+        example_request_data, example_response_data
+
 
 class Content(BaseModel):
     plugin: dict
@@ -136,6 +139,16 @@ class RendererRequest(BaseModel):
     content: List[Content]
     report_data: ReportData
 
+    class Config:
+        schema_extra = {
+            "example": example_request_data
+        }
+
 class RendererResponse(BaseModel):
     clusters: List[str]
     reports: Dict[str, List[RenderedReport] ]
+
+    class Config:
+        schema_extra = {
+            "example": example_response_data
+        }

@@ -3,7 +3,7 @@ from fastapi import status
 import pytest
 
 from insights_content_template_renderer.endpoints import app
-from insights_content_template_renderer.tests.utils_test import test_request_data, test_response_data
+from insights_content_template_renderer.tests.utils_test import example_request_data, example_response_data
 
 
 client = TestClient(app)
@@ -22,7 +22,7 @@ def test_no_data():
 
 
 def test_valid_data():
-    response = client.post(ENDPOINT__V1_RENDERED_REPORTS, json=test_request_data)
+    response = client.post(ENDPOINT__V1_RENDERED_REPORTS, json=example_request_data)
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == test_response_data
+    assert response.json() == example_response_data
 
