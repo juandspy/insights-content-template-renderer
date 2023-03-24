@@ -4,8 +4,12 @@ Unit tests for utils.py
 
 import json
 from pathlib import Path
+import pydantic
+from typing import List
 import pytest
 from insights_content_template_renderer import utils
+from insights_content_template_renderer.models import Report, Content, RendererRequest
+
 
 test_data = {}
 test_data_path = Path(__file__).with_name("request_data_example.json")
@@ -20,7 +24,7 @@ def test_get_reported_error_key():
     cluster_reports = test_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
-    report = cluster_reports["reports"][0].copy()
+    report = Report.parse_obj(cluster_reports["reports"][0])
     reported_error_key = utils.get_reported_error_key(report)
     assert reported_error_key == "NODES_MINIMUM_REQUIREMENTS_NOT_MET"
 
@@ -32,37 +36,9 @@ def test_get_reported_module():
     cluster_reports = test_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
-    report = cluster_reports["reports"][0].copy()
+    report = Report.parse_obj(cluster_reports["reports"][0])
     reported_module = utils.get_reported_module(report)
     assert reported_module == "ccx_rules_ocp.external.rules.nodes_requirements_check"
-
-
-def test_get_reported_module_component_field_missing():
-    """
-    Checks that the get_reported_module() function raises error
-    in case the required field is missing.
-    """
-    cluster_reports = test_data["report_data"]["reports"][
-        "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
-    ]
-    report = cluster_reports["reports"][0].copy()
-    del report["component"]
-    with pytest.raises(ValueError):
-        utils.get_reported_module(report)
-
-
-def test_get_reported_error_key_key_field_missing():
-    """
-    Checks that the get_reported_error_key() function raises error
-    in case the required field is missing.
-    """
-    cluster_reports = test_data["report_data"]["reports"][
-        "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
-    ]
-    report = cluster_reports["reports"][0].copy()
-    del report["key"]
-    with pytest.raises(ValueError):
-        utils.get_reported_error_key(report)
 
 
 def test_escape_raw_text_for_js():
@@ -83,8 +59,8 @@ def test_render_resolution():
     cluster_reports = test_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
-    report = cluster_reports["reports"][0].copy()
-    rule_content = test_data["content"][3].copy()
+    report = Report.parse_obj(cluster_reports["reports"][0])
+    rule_content = Content.parse_obj(test_data["content"][3])
     result = "Red Hat recommends that you configure your nodes to meet the minimum resource requirements.\n\nMake " \
              "sure that:\n\n\n1. Node foo1 (undefined)\n   * Has enough memory, minimum requirement is 16. Currently " \
              "its only configured with 8.16GB.\n"
@@ -100,8 +76,8 @@ def test_render_reason():
     cluster_reports = test_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
-    report = cluster_reports["reports"][0].copy()
-    rule_content = test_data["content"][3]
+    report = Report.parse_obj(cluster_reports["reports"][0])
+    rule_content = Content.parse_obj(test_data["content"][3])
     rendered = utils.render_reason(rule_content, report)
     result = "Node not meeting the minimum " \
              "requirements:\n\n1. foo1\n  * Roles: undefined\n  * " \
@@ -116,8 +92,8 @@ def test_render_description():
     cluster_reports = test_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
-    report = cluster_reports["reports"][0].copy()
-    rule_content = test_data["content"][3]
+    report = Report.parse_obj(cluster_reports["reports"][0])
+    rule_content = Content.parse_obj(test_data["content"][3])
     result = "An OCP node foo1 behaves unexpectedly when it doesn't meet the minimum resource requirements"
     rendered = utils.render_description(rule_content, report)
 
@@ -132,8 +108,8 @@ def test_render_report():
     cluster_reports = test_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
-    report = cluster_reports["reports"][0].copy()
-    content = test_data["content"].copy()
+    report = Report.parse_obj(cluster_reports["reports"][0])
+    contents = pydantic.parse_obj_as(List[Content], test_data["content"])
     result = {
         "rule_id": "ccx_rules_ocp.external.rules.nodes_requirements_check",
         "error_key": "NODES_MINIMUM_REQUIREMENTS_NOT_MET",
@@ -144,7 +120,7 @@ def test_render_report():
                   "memory requirement is 16, but the node is configured with 8.16.\n",
         "description": "An OCP node foo1 behaves unexpectedly when it doesn't meet the minimum resource requirements",
     }
-    rendered = utils.render_report(content, report)
+    rendered = utils.render_report(contents, report)
     assert rendered == result
 
 
@@ -156,11 +132,12 @@ def test_render_report_missing_rule_content():
     cluster_reports = test_data["report_data"]["reports"][
         "5d5892d3-1f74-4ccf-91af-548dfc9767aa"
     ]
-    report = cluster_reports["reports"][0].copy()
-    content = test_data["content"].copy()
-    del content[3]
+    report = Report.parse_obj(cluster_reports["reports"][0])
+    contents = test_data["content"].copy()
+    del contents[3]
+    contents = pydantic.parse_obj_as(List[Content], contents)
     with pytest.raises(utils.RuleNotFoundException):
-        utils.render_report(content, report)
+        utils.render_report(contents, report)
 
 
 def test_render_reports():
@@ -204,47 +181,7 @@ def test_render_reports():
             ]
         }
     }
-    rendered = utils.render_reports(test_data)
+    req = RendererRequest.parse_obj(test_data)
+    rendered = utils.render_reports(req)
     assert rendered == result
 
-
-def test_render_reports_missing_content():
-    """
-    Checks that render_reports() function raises exception if the content data are missing.
-    """
-    data = test_data.copy()
-    del data["content"]
-    with pytest.raises(ValueError):
-        utils.render_reports(data)
-
-
-def test_render_reports_missing_report_data():
-    """
-    Checks that render_reports() function raises exception if the report data are missing.
-    """
-    data = test_data.copy()
-    del data["report_data"]
-    with pytest.raises(ValueError):
-        utils.render_reports(data)
-
-
-def test_render_reports_missing_clusters():
-    """
-    Checks that render_reports() function raises exception
-    if the data for reported clusters are missing.
-    """
-    data = test_data.copy()
-    del data["report_data"]["clusters"]
-    with pytest.raises(ValueError):
-        utils.render_reports(data)
-
-
-def test_render_reports_missing_reports():
-    """
-    Checks that render_reports() function raises exception
-    if the data for individual reports are missing.
-    """
-    data = test_data.copy()
-    del data["report_data"]["reports"]
-    with pytest.raises(ValueError):
-        utils.render_reports(data)
