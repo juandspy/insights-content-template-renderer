@@ -1,5 +1,5 @@
 from insights_content_template_renderer.models import *
-from insights_content_template_renderer.tests.utils_test import example_request_data
+from insights_content_template_renderer.data import example_request_data
 
 
 def test_renderer_request():

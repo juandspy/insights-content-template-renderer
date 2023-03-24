@@ -3,7 +3,7 @@ from fastapi import status
 import pytest
 
 from insights_content_template_renderer.endpoints import app
-from insights_content_template_renderer.tests.utils_test import example_request_data, example_response_data
+from insights_content_template_renderer.data import example_request_data, example_response_data
 
 
 client = TestClient(app)

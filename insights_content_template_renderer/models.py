@@ -4,7 +4,7 @@ import uuid
 from pydantic import BaseModel
 
 from insights_content_template_renderer.data import \
-        example_request_data, example_response_data
+        example_request_data, example_response_data, example_content_data
 
 
 class Content(BaseModel):
@@ -19,62 +19,7 @@ class Content(BaseModel):
 
     class Config:
         schema_extra = {
-            "example": {
-                "plugin": {
-                        "name": "",
-                        "node_id": "",
-                        "product_code": "",
-                        "python_module": "rule_1"
-                },
-                "error_keys": {
-                        "RULE_1": {
-                                "metadata": {
-                                        "description": "rule 1 error key description",
-                                        "impact": {
-                                                "name": "impact_1",
-                                                "impact": 3
-                                        },
-                                        "likelihood": 2,
-                                        "publish_date": "",
-                                        "status": "",
-                                        "tags": None
-                                },
-                                "total_risk": 0,
-                                "generic": "",
-                                "summary": "",
-                                "resolution": "",
-                                "more_info": "",
-                                "reason": "rule 1 reason",
-                                "HasReason": True
-                        },
-                        "RULE_2": {
-                                "metadata": {
-                                        "description": "rule 2 error key description",
-                                        "impact": {
-                                                "name": "impact_2",
-                                                "impact": 2
-                                        },
-                                        "likelihood": 3,
-                                        "publish_date": "",
-                                        "status": "",
-                                        "tags": None
-                                },
-                                "total_risk": 0,
-                                "generic": "",
-                                "summary": "",
-                                "resolution": "",
-                                "more_info": "",
-                                "reason": "",
-                                "HasReason": False
-                        }
-                },
-                "generic": "",
-                "summary": "rule 1 summary",
-                "resolution": "rule 1 resolution",
-                "more_info": "rule 1 more info",
-                "reason": "rule 1 reason",
-                "HasReason": True
-            }
+            "example": example_content_data 
         }
 
 
