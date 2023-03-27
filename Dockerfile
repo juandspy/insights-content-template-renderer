@@ -14,4 +14,4 @@ USER 1001
 
 EXPOSE 8000
 
-CMD ["insights-content-template-renderer", "--config", "docker_config.yml"]
+CMD ["insights-content-template-renderer", "--config", "config.yml"]

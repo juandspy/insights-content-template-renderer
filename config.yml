@@ -1,4 +1,8 @@
-"host": "localhost"
+# This configuration is overwritten in a configmap for the deployment.
+# Make sure to check the clowdapp.yaml if you want to make any change in
+# stage or prod.
+
+"host": "0.0.0.0"
 "port": 8000
 "logging":
    "version": 1
