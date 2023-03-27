@@ -90,7 +90,9 @@ def get_template_function(template_name, template_text, report: Report):
     try:
         return js2py.eval_js(template)
     except Exception as ex:
-        log.error(f"cannot evaluate JS template:\n{template}")
+        log.error(f"cannot evaluate JS template")
+        log.error(f"template: {template}")
+        log.error(f"report: {report}")
         raise Exception('Cannot evaluate JS code') from ex
 
 
