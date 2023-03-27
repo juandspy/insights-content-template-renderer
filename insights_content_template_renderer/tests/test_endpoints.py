@@ -24,6 +24,5 @@ def test_no_data():
 def test_valid_data():
     response = client.post(ENDPOINT__V1_RENDERED_REPORTS, json=example_request_data)
     assert response.status_code == status.HTTP_200_OK
-    print(response.json())
     assert response.json() == example_response_data
 
