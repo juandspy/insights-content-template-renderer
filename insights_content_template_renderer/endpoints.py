@@ -31,7 +31,6 @@ async def rendered_reports(data: RendererRequest):
     :return: JSON with rendered reports
     """
     log.info("Received request for /rendered_reports")
-    # print(data)
     log.debug("Rendering report")
     rendered_report = render_reports(data)
     log.debug("Report successfully rendered")
