@@ -89,7 +89,7 @@ def get_template_function(template_name, template_text, report: Report):
     template = renderer.template(escape_raw_text_for_js(template_text), DoT_settings)
     try:
         return js2py.eval_js(template)
-    except Exception as ex:
+    except js2py.internals.simplex.JsException as ex:
         log.error(f"cannot evaluate JS template")
         log.error(f"template: {template}")
         log.error(f"report: {report}")
