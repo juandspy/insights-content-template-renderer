@@ -19,6 +19,10 @@ and create a Docker container via
 
 `docker run -d --name renderer -p 8000:8000 insights-content-template-renderer`
 
+## Configuration
+
+There is a sample configuration in [config.yml](config.yml). The configuration for stage/prod deployments is overwritten in the [clowdapp](deploy/clowdapp.yaml) in a ConfigMap.
+
 ## Endpoints
 
 As said, the service has the single endpoint:
