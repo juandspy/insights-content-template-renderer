@@ -51,23 +51,6 @@ def get_reported_error_key(report: Report) -> str:
     """
     return report.key
 
-def escape_new_line_inside_brackets(text):
-    """
-    Escape the new lines inside brackets that were causing some issues.
-
-    https://issues.redhat.com/browse/CCXDEV-10314
-    """
-    return re.sub(r'\n(?=[^{{}}]*})', '', text)
-
-
-def escape_raw_text_for_js(text):
-    """
-    Escapes all the escape characters like whitespace, newline, tabulation,
-    etc, as well as single quotes.
-    """
-    no_newlines = escape_new_line_inside_brackets(text)
-    return no_newlines.encode("unicode_escape").decode()
-
 
 def unescape_raw_text_for_python(text):
     """
@@ -96,7 +79,7 @@ def get_template_function(template_name, template_text, report: Report):
         )
     log.debug(template_text)
 
-    template = renderer.template(escape_raw_text_for_js(template_text), DoT_settings)
+    template = renderer.template(template_text, DoT_settings)
     return js2py.eval_js(template)
 
 
