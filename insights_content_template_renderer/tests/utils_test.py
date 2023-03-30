@@ -35,17 +35,6 @@ def test_get_reported_module():
     assert reported_module == "ccx_rules_ocp.external.rules.1"
 
 
-def test_escape_raw_text_for_js():
-    """
-        Checks that the escape_raw_text_for_JS() function converts the input string
-        into its literal representation so it can be used properly by js2py.eval_js
-    """
-    text = "Something to report.\n\nMake sure that:\n\t1Node is alive and\n\t   * Has enough memory,\n\t   * Has " \
-           "enough CPU. "
-    assert utils.escape_raw_text_for_js(text) == r"Something to report.\n\nMake sure that:\n\t1Node is alive and\n\t " \
-                                                 r"  * Has enough memory,\n\t   * Has enough CPU. "
-
-
 def test_render_resolution():
     """
     Checks that the render_resolution() function renders resolution correctly.
@@ -150,21 +139,3 @@ def test_render_reports():
     req = RendererRequest.parse_obj(example_request_data)
     rendered = utils.render_reports(req)
     assert RendererResponse.parse_obj(rendered) == result
-
-
-def test_escape_new_line_inside_brackets():
-    input = "Text\nwith a {{newline\n}} inside the brackets"
-    input = """
-{{?pydata.test.length>1
-}}First if{{?? pydata.test[0]['subtest'].length>1
-}}Second if{{??
-}}Third if{{?}}.
-
-More text
-"""
-    output = utils.escape_new_line_inside_brackets(input)
-    assert output == """
-{{?pydata.test.length>1}}First if{{?? pydata.test[0]['subtest'].length>1}}Second if{{??}}Third if{{?}}.
-
-More text
-"""

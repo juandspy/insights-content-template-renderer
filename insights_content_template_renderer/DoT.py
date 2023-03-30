@@ -41,7 +41,7 @@ DEFAULT_TEMPLATE_SETTINGS = {
     "conditional": r"\{\{\?(\?)?\s*([\s\S]*?)\s*\}\}",
     "iterate": r"\{\{~\s*(?:\}\}|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\}\})",
     "varname": "it",
-    "strip": False,
+    "strip": True,
     "append": True,
     "selfcontained": False,
 }
