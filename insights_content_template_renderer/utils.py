@@ -5,7 +5,6 @@ Provides all business logic for this service.
 import logging
 import js2py
 from typing import List
-import re
 
 from insights_content_template_renderer import DoT
 from insights_content_template_renderer.DoT import DEFAULT_TEMPLATE_SETTINGS
@@ -52,6 +51,14 @@ def get_reported_error_key(report: Report) -> str:
     return report.key
 
 
+def escape_raw_text_for_js(text):
+    """
+    Escapes all the escape characters like whitespace, newline, tabulation,
+    etc, as well as single quotes.
+    """
+    return text.encode("unicode_escape").decode()
+
+
 def unescape_raw_text_for_python(text):
     """
     Undoes all the escaping of special characters like whitespace, newline, tabulation,
@@ -79,7 +86,7 @@ def get_template_function(template_name, template_text, report: Report):
         )
     log.debug(template_text)
 
-    template = renderer.template(template_text, DoT_settings)
+    template = renderer.template(escape_raw_text_for_js(template_text), DoT_settings)
     return js2py.eval_js(template)
 
 
