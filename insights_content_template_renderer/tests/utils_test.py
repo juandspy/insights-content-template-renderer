@@ -151,20 +151,3 @@ def test_render_reports():
     rendered = utils.render_reports(req)
     assert RendererResponse.parse_obj(rendered) == result
 
-
-def test_escape_new_line_inside_brackets():
-    input = "Text\nwith a {{newline\n}} inside the brackets"
-    input = """
-{{?pydata.test.length>1
-}}First if{{?? pydata.test[0]['subtest'].length>1
-}}Second if{{??
-}}Third if{{?}}.
-
-More text
-"""
-    output = utils.escape_new_line_inside_brackets(input)
-    assert output == """
-{{?pydata.test.length>1}}First if{{?? pydata.test[0]['subtest'].length>1}}Second if{{??}}Third if{{?}}.
-
-More text
-"""

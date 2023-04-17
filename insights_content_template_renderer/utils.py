@@ -5,7 +5,6 @@ Provides all business logic for this service.
 import logging
 import js2py
 from typing import List
-import re
 
 from insights_content_template_renderer import DoT
 from insights_content_template_renderer.DoT import DEFAULT_TEMPLATE_SETTINGS
@@ -51,22 +50,13 @@ def get_reported_error_key(report: Report) -> str:
     """
     return report.key
 
-def escape_new_line_inside_brackets(text):
-    """
-    Escape the new lines inside brackets that were causing some issues.
-
-    https://issues.redhat.com/browse/CCXDEV-10314
-    """
-    return re.sub(r'\n(?=[^{{}}]*})', '', text)
-
 
 def escape_raw_text_for_js(text):
     """
     Escapes all the escape characters like whitespace, newline, tabulation,
     etc, as well as single quotes.
     """
-    no_newlines = escape_new_line_inside_brackets(text)
-    return no_newlines.encode("unicode_escape").decode()
+    return text.encode("unicode_escape").decode()
 
 
 def unescape_raw_text_for_python(text):
