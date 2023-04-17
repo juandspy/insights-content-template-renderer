@@ -31,5 +31,7 @@ def test_nonletter_characters_correct_handling():
             r"sure that:\n\n1. Node foo1 (undefined) * Has enough memory, minimum requirement is 16. Currently its " \
             r"only configured with 8.16GB. "
 
+    DoT_settings['strip'] = False
+
     text = js2py.eval_js(renderer.template(input, DoT_settings))()
     assert text == input
