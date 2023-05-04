@@ -13,7 +13,6 @@ from insights_content_template_renderer.models import RendererRequest, \
 
 
 DoT_settings = DEFAULT_TEMPLATE_SETTINGS
-DoT_settings["varname"] = "pydata"
 log = logging.getLogger(__name__)
 renderer = DoT.Renderer()
 
