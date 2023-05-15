@@ -911,6 +911,7 @@ data:
       "timepicker": {},
       "timezone": "",
       "title": "CCX Template Renderer",
+      "uid": "ccx-template-renderer",
       "version": 0,
       "weekStart": ""
     }
