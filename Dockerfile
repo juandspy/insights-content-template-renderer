@@ -9,8 +9,7 @@ WORKDIR $HOME
 
 COPY . $HOME
 
-ENV PATH="$VENV/bin:$PATH" \
-    CONFIG_PATH="$HOME/config.yml"
+ENV PATH="$VENV/bin:$PATH"
 
 RUN python -m venv $VENV
 RUN pip install --verbose --no-cache-dir -U pip setuptools wheel
@@ -26,7 +25,4 @@ USER 1001
 
 EXPOSE 8000
 
-ENV PATH="$VENV/bin:$PATH" \
-    CONFIG_PATH="$HOME/config.yml"
-
-CMD ["sh", "-c", "insights-content-template-renderer --config $CONFIG_PATH"]
+CMD ["uvicorn", "insights_content_template_renderer.endpoints:app", "--host=0.0.0.0", "--port=8000", "--log-config", "logging.yml"]
