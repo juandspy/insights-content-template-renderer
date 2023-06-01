@@ -46,4 +46,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: logs
-          path: /insights-behavioral-spec/logs
+          path: /insights-behavioral-spec/logs/insights-content-template-renderer
