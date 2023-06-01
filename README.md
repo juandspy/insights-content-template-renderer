@@ -9,7 +9,7 @@ Check the [docs](docs/) folder for more information about this service.
 
 The service can be run either locally:
 
-`pip3 install -r requirements.txt && pip3 install . && insights-content-template-renderer --config <CONFIG>`
+`pip3 install -r requirements.txt && pip3 install . && uvicorn insights_content_template_renderer.endpoints:app --log-config <CONFIG>`
 
 Or you can run the service as the Docker container. In that case make sure you have a Docker engine installed and running. Then you can create a Docker image with
 
@@ -21,7 +21,7 @@ and create a Docker container via
 
 ## Configuration
 
-There is a sample configuration in [config.yml](config.yml). The configuration for stage/prod deployments is overwritten in the [clowdapp](deploy/clowdapp.yaml) in a ConfigMap.
+There is a sample configuration in [logging.yml](logging.yml). The configuration for stage/prod deployments is overwritten in the [clowdapp](deploy/clowdapp.yaml) in a ConfigMap.
 
 ## Endpoints
 

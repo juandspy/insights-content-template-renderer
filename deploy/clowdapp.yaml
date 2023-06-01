@@ -75,8 +75,8 @@ objects:
               memory: 200Mi
           volumeMounts:
           - name: config
-            mountPath: "/insights-content-template-renderer/config.yml"
-            subPath: "config.yml"
+            mountPath: "/insights-content-template-renderer/logging.yml"
+            subPath: "logging.yml"
             readOnly: true
           volumes:
           - name: config
@@ -111,28 +111,42 @@ objects:
     labels:
       app: insights-content-template-renderer
   data:
-    config.yml: |
-      "host": "0.0.0.0"
-      "port": 8000
-      "logging":
-        "version": 1
-        "disable_existing_loggers": false
-        "formatters":
-            "KeyValueFormatter":
-              "format": "timestamp=%(asctime)s pid=%(process)d loglevel=%(levelname)s msg=%(message)s"
-        "handlers":
-            "console":
-              "level": "${LOG_LEVEL}"
-              "class": "logging.StreamHandler"
-              "formatter": "KeyValueFormatter"
-        "loggers":
-            "gunicorn.access":
-              "propagate": true
-            "gunicorn.error":
-              "propagate": true
-        "root":
-            "level": "${LOG_LEVEL}"
-            "handlers": ["console"]
+    logging.yml: |
+      version: 1
+      formatters:
+        simple:
+          format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        default:
+          (): uvicorn.logging.DefaultFormatter
+          fmt: '%(asctime)s %(levelprefix)s %(message)s'
+          use_colors: None
+        access:
+          (): uvicorn.logging.AccessFormatter
+          fmt: '%(asctime)s %(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s'
+      handlers:
+        console:
+          class: logging.StreamHandler
+          level: DEBUG
+          formatter: simple
+          stream: ext://sys.stdout
+        default:
+          formatter: default
+          class: logging.StreamHandler
+          stream: ext://sys.stderr
+      loggers:
+        insights_content_template_renderer:
+          level: DEBUG
+          handlers: [default]
+          propagate: no
+        uvicorn:
+          handlers: [default]
+          level: INFO
+          propagate: no
+        uvicorn.error:
+          level: INFO
+      root:
+        level: INFO
+        handlers: [default]
 
 parameters:
 - description: Image name
