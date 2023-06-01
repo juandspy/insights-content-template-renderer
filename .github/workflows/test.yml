@@ -39,7 +39,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Run BDD tests
-        run: make insights-content-template-renderer-tests
+        run: cd $BDD_PATH && make insights-content-template-renderer-tests
       - uses: actions/upload-artifact@v3
         with:
           name: logs
