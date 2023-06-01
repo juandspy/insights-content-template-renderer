@@ -14,7 +14,6 @@ ENV PATH="$VENV/bin:$PATH"
 RUN python -m venv $VENV
 RUN pip install --verbose --no-cache-dir -U pip setuptools wheel
 RUN pip install --verbose --no-cache-dir -r requirements.txt
-RUN pip install .
 
 # Clean up not necessary packages if useful
 RUN pip uninstall -y py #https://pypi.org/project/py/
