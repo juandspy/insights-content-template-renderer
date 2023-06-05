@@ -25,9 +25,10 @@ This module implements the DoT.js template framework in Python.
 Source: https://github.com/lucemia/doT
 """
 
-import re
 import doT
+import logging
 
+log = logging.getLogger(__name__)
 
 version = "1.0.0"
 

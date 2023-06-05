@@ -4,6 +4,7 @@ Provides all business logic for this service.
 
 import logging
 import js2py
+import re
 from typing import List
 
 from insights_content_template_renderer import DoT
@@ -58,6 +59,14 @@ def escape_raw_text_for_js(text):
     return text.encode("unicode_escape").decode()
 
 
+def escape_new_line_inside_brackets(text):
+    """
+    Escape the new lines inside brackets that were causing some issues.
+    https://issues.redhat.com/browse/CCXDEV-10314
+    """
+    return re.sub(r'{{(.*?)\\n}}', r'{{\1}}', text)
+
+
 def unescape_raw_text_for_python(text):
     """
     Undoes all the escaping of special characters like whitespace, newline, tabulation,
@@ -83,9 +92,15 @@ def get_template_function(template_name, template_text, report: Report):
             f"Template '{template_name}' has not been found for rule '{reported_module}' "
             + f"and error key '{reported_error_key}'."
         )
-    log.debug(template_text)
 
-    template = renderer.template(escape_raw_text_for_js(template_text), DoT_settings)
+    template_text_no_newline_inside_brackets = escape_new_line_inside_brackets(
+        escape_raw_text_for_js(template_text)
+    )
+
+    template = renderer.template(
+        template_text_no_newline_inside_brackets,
+        DoT_settings
+    )
     return js2py.eval_js(template)
 
 
