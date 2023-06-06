@@ -151,3 +151,8 @@ def test_render_reports():
     rendered = utils.render_reports(req)
     assert RendererResponse.parse_obj(rendered) == result
 
+def test_escape_new_line_inside_brackets():
+    input = r"{{?pydata.options == 1\n}}Option 1{{?? pydata.options == 2\n}}Option 2{{??\n}}Other option{{?}}:\n\n More text"
+    want = r"{{?pydata.options == 1}}Option 1{{?? pydata.options == 2}}Option 2{{??}}Other option{{?}}:\n\n More text"
+    got = utils.escape_new_line_inside_brackets(input)
+    assert got == want
