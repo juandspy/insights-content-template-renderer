@@ -198,10 +198,3 @@ parameters:
 - description: Logging level
   name: LOG_LEVEL
   value: DEBUG
-<<<<<<< HEAD
-
-- name: IRSP_LOG_STREAM
-  value: "ccx-data-pipeline"
-  description: cloudwatch log stream
-=======
->>>>>>> d137fa4 (change CW stream name)
