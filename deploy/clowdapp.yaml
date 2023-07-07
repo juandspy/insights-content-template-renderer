@@ -87,7 +87,7 @@ objects:
             - name: LOGGING_TO_CW_ENABLED
               value: "True"
             - name: CW_STREAM_NAME
-              value: ${IRSP_LOG_STREAM}
+              value: ccx-insights-content-template-renderer
             - name: CW_AWS_REGION_NAME
               valueFrom:
                 secretKeyRef:
@@ -198,7 +198,10 @@ parameters:
 - description: Logging level
   name: LOG_LEVEL
   value: DEBUG
+<<<<<<< HEAD
 
 - name: IRSP_LOG_STREAM
   value: "ccx-data-pipeline"
   description: cloudwatch log stream
+=======
+>>>>>>> d137fa4 (change CW stream name)
