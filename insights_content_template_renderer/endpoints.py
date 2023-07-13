@@ -8,12 +8,10 @@ from fastapi.responses import PlainTextResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from insights_content_template_renderer.utils import render_reports
-from insights_content_template_renderer.logging_utils import setup_watchtower
 from insights_content_template_renderer.models import RendererRequest, RendererResponse
 
 
 app = FastAPI()
-setup_watchtower()
 log = logging.getLogger(__name__)
 
 
