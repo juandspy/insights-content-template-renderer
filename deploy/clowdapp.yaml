@@ -81,11 +81,11 @@ objects:
           volumes:
           - name: config
             configMap:
-              name: uvicorn-config
+              name: logging-config-insights-content-template-renderer
           env:
             # Cloudwatch logging
             - name: LOGGING_TO_CW_ENABLED
-              value: "True"
+              value: ${LOGGING_TO_CW_ENABLED}
             - name: CW_STREAM_NAME
               value: ccx-insights-content-template-renderer
             - name: CW_AWS_REGION_NAME
@@ -137,7 +137,7 @@ objects:
 - kind: ConfigMap
   apiVersion: v1
   metadata:
-    name: uvicorn-config
+    name: logging-config-insights-content-template-renderer
     labels:
       app: insights-content-template-renderer
   data:
@@ -211,3 +211,6 @@ parameters:
 - description: Logging level
   name: LOG_LEVEL
   value: DEBUG
+- description: Whether to log into CW
+  name: LOGGING_TO_CW_ENABLED
+  value: 'True'
