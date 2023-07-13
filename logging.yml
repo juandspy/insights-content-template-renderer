@@ -1,14 +1,17 @@
+# Please note that this file is overriden in the clowdapp.yaml
 version: 1
 formatters:
   simple:
     format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
   default:
     (): uvicorn.logging.DefaultFormatter
-    fmt: '%(asctime)s %(levelprefix)s %(message)s'
+    fmt: '%(name)s %(levelprefix)s %(message)s'
     use_colors: None
   access:
     (): uvicorn.logging.AccessFormatter
-    fmt: '%(asctime)s %(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s'
+    fmt: '%(name)s %(levelprefix)s %(client_addr)s - "%(request_line)s" %(status_code)s'
+  json:
+    class: pythonjsonlogger.jsonlogger.JsonFormatter
 handlers:
   console:
     class: logging.StreamHandler
@@ -19,17 +22,28 @@ handlers:
     formatter: default
     class: logging.StreamHandler
     stream: ext://sys.stderr
+  access:
+    formatter: access
+    class: logging.StreamHandler
+    stream: ext://sys.stdout
+  cloudwatch:
+    formatter: json
+    class: insights_content_template_renderer.logging_utils.InitializedCloudWatchLogger
 loggers:
   insights_content_template_renderer:
     level: DEBUG
-    handlers: [default]
+    handlers: [default, cloudwatch]
     propagate: no
   uvicorn:
-    handlers: [default]
+    handlers: [default, cloudwatch]
     level: INFO
     propagate: no
   uvicorn.error:
     level: INFO
+  uvicorn.access:
+    handlers: [access, cloudwatch]
+    level: INFO
+    propagate: no
 root:
-  level: INFO
-  handlers: [default]
+  level: DEBUG
+  handlers: [default, cloudwatch]
