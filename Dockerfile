@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8-minimal:8.8-1037
+FROM registry.access.redhat.com/ubi8-minimal:latest
 
 ENV VENV=/insights-content-template-renderer-venv \
     HOME=/insights-content-template-renderer
