@@ -19,6 +19,7 @@ RUN pip install --verbose --no-cache-dir -r requirements.txt
 RUN pip uninstall -y py #https://pypi.org/project/py/
 
 RUN microdnf clean all
+RUN rpm -e --nodeps krb5-libs
 
 USER 1001
 
