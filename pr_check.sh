@@ -22,16 +22,22 @@ set -exv
 APP_NAME="ccx-data-pipeline"  # name of app-sre "application" folder this component lives in
 COMPONENT_NAME="insights-content-template-renderer"  # name of app-sre "resourceTemplate" in deploy.yaml for this component
 IMAGE="quay.io/cloudservices/insights-content-template-renderer"
-COMPONENTS="insights-content-template-renderer"  # space-separated list of components to laod
+COMPONENTS="ccx-data-pipeline ccx-insights-results dvo-writer ccx-smart-proxy ccx-notification-writer ccx-notification-service ccx-notification-db-cleaner notifications-backend notifications-aggregator notifications-engine insights-content-service ccx-mock-ams ccx-upgrades-sso-mock insights-content-template-renderer"  # space-separated list of components to load
 COMPONENTS_W_RESOURCES="insights-content-template-renderer"  # component to keep
 CACHE_FROM_LATEST_IMAGE="true"
+DEPLOY_FRONTENDS="false"
 
 export IQE_PLUGINS="ccx"
-export IQE_MARKER_EXPRESSION=""
-# Workaround: There are no specific integration tests. Check that the service loads and iqe plugin works.
-export IQE_FILTER_EXPRESSION="test_plugin_accessible"
+export IQE_MARKER_EXPRESSION="servicelog"
+export IQE_FILTER_EXPRESSION=""
 export IQE_REQUIREMENTS_PRIORITY=""
 export IQE_TEST_IMPORTANCE=""
+export IQE_CJI_TIMEOUT="30m"
+export IQE_SELENIUM="false"
+export IQE_ENV="ephemeral"
+export IQE_ENV_VARS="DYNACONF_USER_PROVIDER__rbac_enabled=false"
+
+
 export IQE_CJI_TIMEOUT="30m"
 
 
@@ -45,11 +51,9 @@ function deploy_ephemeral() {
 
 function run_smoke_tests() {
     # component name needs to be re-export to match ClowdApp name (as bonfire requires for this)
-    
-    # TODO: Uncomment when there are any tests
-    # export COMPONENT_NAME="insights-content-template-renderer"
-    # source $CICD_ROOT/cji_smoke_test.sh
-    echo "To be implemented"
+    export COMPONENT_NAME="insights-content-template-renderer"    
+    source $CICD_ROOT/cji_smoke_test.sh
+    source $CICD_ROOT/post_test_results.sh  # publish results in Ibutsu#
 }
 
 
