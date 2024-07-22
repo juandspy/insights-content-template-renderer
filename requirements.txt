@@ -1,6 +1,6 @@
 argparse==1.4.0
 fastapi==0.95.0
-uvicorn==0.30.1
+uvicorn==0.30.3
 js2py==0.74.0
 pytest==8.3.1
 pyyaml==6.0.1
