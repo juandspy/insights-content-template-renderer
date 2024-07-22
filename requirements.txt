@@ -8,6 +8,7 @@ prometheus_fastapi_instrumentator==6.1.0
 requests==2.32.3
 httpx
 doT-js-py==2.0.0
+sentry_sdk[fastapi]
 
 # Logging to Cloudwatch
 boto3

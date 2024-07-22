@@ -9,8 +9,10 @@ from prometheus_fastapi_instrumentator import Instrumentator
 
 from insights_content_template_renderer.utils import render_reports
 from insights_content_template_renderer.models import RendererRequest, RendererResponse
+from insights_content_template_renderer.logging_sentry import init_sentry
 
 
+init_sentry()
 app = FastAPI()
 log = logging.getLogger(__name__)
 
@@ -33,6 +35,7 @@ async def rendered_reports(data: RendererRequest):
     """
     log.info("Received request for /rendered_reports")
     log.debug("Rendering report")
+
     try:
         rendered_report = render_reports(data)
         log.debug("Report successfully rendered")
