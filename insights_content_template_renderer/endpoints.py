@@ -3,10 +3,12 @@ Contains service endpoints.
 """
 
 import logging
+import os
 from fastapi import FastAPI
 from fastapi.responses import PlainTextResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 
+from insights_content_template_renderer.sentry import init_sentry
 from insights_content_template_renderer.utils import render_reports
 from insights_content_template_renderer.models import RendererRequest, RendererResponse
 
@@ -14,7 +16,9 @@ from insights_content_template_renderer.models import RendererRequest, RendererR
 app = FastAPI()
 log = logging.getLogger(__name__)
 
-
+init_sentry(
+    os.environ.get("SENTRY_DSN", None), None, os.environ.get("SENTRY_ENVIRONMENT", None)
+)
 instrumentator = Instrumentator().instrument(app)
 
 @app.on_event("startup")

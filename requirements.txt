@@ -9,6 +9,9 @@ requests==2.32.3
 httpx
 doT-js-py==2.0.0
 
+# Logging to sentry
+sentry_sdk
+
 # Logging to Cloudwatch
 boto3
 python-json-logger

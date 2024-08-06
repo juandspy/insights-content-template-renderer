@@ -20,6 +20,7 @@ Copied from https://github.com/RedHatInsights/insights-ccx-messaging/blob/main/c
 
 import os
 import logging
+import sentry_sdk
 
 from boto3.session import Session
 from watchtower import CloudWatchLogHandler

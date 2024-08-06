@@ -83,6 +83,16 @@ objects:
             configMap:
               name: logging-config-insights-content-template-renderer
           env:
+            # Sentry logging
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  key: dsn
+                  name: insights-content-template-renderer-dsn
+                  optional: true
+            - name: SENTRY_ENVIRONMENT
+              value: ${ENV_NAME}
+
             # Cloudwatch logging
             - name: LOGGING_TO_CW_ENABLED
               value: ${LOGGING_TO_CW_ENABLED}
