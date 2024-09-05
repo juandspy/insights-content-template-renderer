@@ -8,7 +8,7 @@ prometheus_fastapi_instrumentator==6.1.0
 requests==2.32.3
 httpx
 doT-js-py==2.0.0
-
+setuptools>=70.0.0
 # Logging to sentry
 sentry_sdk
 
