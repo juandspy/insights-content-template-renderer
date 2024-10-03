@@ -26,6 +26,9 @@ COMPONENTS="ccx-data-pipeline ccx-insights-results dvo-writer ccx-redis ccx-smar
 COMPONENTS_W_RESOURCES="insights-content-template-renderer"  # component to keep
 CACHE_FROM_LATEST_IMAGE="true"
 DEPLOY_FRONTENDS="false"
+# Set the correct images for pull requests.
+# pr_check in pull requests still uses the old cloudservices images
+EXTRA_DEPLOY_ARGS="--set-parameter insights-content-template-renderer/IMAGE=quay.io/cloudservices/insights-content-template-renderer"
 
 export IQE_PLUGINS="ccx"
 export IQE_MARKER_EXPRESSION="servicelog"
